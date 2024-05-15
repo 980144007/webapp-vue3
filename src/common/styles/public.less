@@ -1,0 +1,161 @@
+
+:root {
+    --van-primary-color: #E96736;
+    --van-padding-base: 6px;
+    --van-padding-xs: 10px;
+    --van-padding-sm: 14px;
+    --van-padding-md: 18px;
+    --van-padding-lg: 26px;
+    --van-padding-xl: 34px;
+    --van-font-size-xs: 12px;
+    --van-font-size-sm: 14px;
+    --van-font-size-md: 16px;
+    --van-font-size-lg: 18px;
+    --van-font-bold: bold;
+    --van-line-height-xs: 16px;
+    --van-line-height-sm: 20px;
+    --van-line-height-md: 22px;
+    --van-line-height-lg: 24px;
+    --van-black: #2a2a2a;
+    --van-back-top-background: #E96736!important;
+}
+img {
+    vertical-align: top;
+}
+.van-cell {
+    line-height: unset;
+}
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+@blue-color: var(--van-blue);
+@white-color: #ffffff;
+@primary-color: var(--van-primary-color);
+@danger-color: var(--van-danger-color);
+@warning-color: var(--van-warning-color);
+@success-color: var(--van-success-color);
+
+
+@theme-color: var(--van-primary-color);
+@font-normal-color: var(--van-black);
+@font-gray-color: var(--van-gray-7);
+@font-white-color: @white-color;
+@font-blue-color: @blue-color;
+@background-gray-color: #efefef;
+@background-white-color: @white-color;
+@background-blue-color: @blue-color;
+
+@font-size-xs: var(--van-font-size-xs);
+@font-size-sm: var(--van-font-size-sm);
+@font-size-md: var(--van-font-size-md);
+@font-size-lg: var(--van-font-size-lg);
+
+@padding-base: var(--van-padding-base);
+@padding-xs: var(--van-padding-sm);
+@padding-sm: var(--van-padding-md);
+@padding-md: var(--van-padding-lg);
+@padding-lg: var(--van-padding-xl);
+// @padding-xl: var(--van-padding-xl);
+
+@border-color: var(--van-border-color);
+@border-width: var(--van-border-width);
+
+@radius-sm: var(--van-radius-sm);
+@radius-md: var(--van-radius-md);
+@radius-lg: var(--van-radius-lg);
+@radius-xl: var(--van-radius-xl);
+
+@line-height-normal: var(--van-cell-line-height);
+
+@button-padding: 5px 8px;
+@button-padding-lg: 8px 14px;
+@shadow: {
+    box-shadow: 0px 0px 4px 4px #eaeaea;
+}
+
+.button(@bgColor: @theme-color) {
+    border: none;
+    background: @bgColor;
+    padding: @button-padding;
+    @flex-row-center();
+    font-size: @font-size-sm;
+    color: @font-white-color;
+    .radius();
+    line-height: @font-size-sm;
+    justify-content: center;
+    text-align: center;
+    &[disabled] {
+        opacity: 0.6;
+    }
+}
+.button-lg(@bgColor: @theme-color) {
+    .button(@bgColor);
+    padding: @button-padding-lg;
+}
+
+/*文本超出省略*/
+.ellipsis(@num: 1) {
+    display: -webkit-box;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -webkit-line-clamp: @num;
+    line-break: anywhere;
+    -webkit-box-orient: vertical;
+}
+
+
+.status-tag(@bgColor: @background-blue-color) {
+    background: @bgColor;
+    font-size: @font-size-sm;
+    line-height: @font-size-sm;
+    padding: calc(@padding-xs / 4) @padding-md;
+    border-end-start-radius: calc((@font-size-sm + @padding-xs / 4) / 1.5);
+    border-end-end-radius: calc((@font-size-sm + @padding-xs / 4) / 1.5);
+    color: @font-white-color;
+}
+
+.radius(@radius: @radius-md) {
+    border-radius: @radius;
+    // overflow: hidden;
+}
+// .radius(all, @radius: @radius-md) {
+//     border-radius: @radius;
+//     overflow: hidden;
+// }
+
+@full: {
+    width: 100%;
+    height: 100%;
+    flex-grow: 1;
+    box-sizing: border-box;
+}
+@flex-row: {
+    display: flex;
+    flex-direction: row;
+}
+@flex-row-center: {
+    @flex-row();
+    align-items: center;
+}
+@flex-col: {
+    display: flex;
+    flex-direction: column;
+}
+@flex-col-center: {
+    @flex-col();
+    align-items: center;
+}
+@flex-col-grow: {
+    flex-grow: 1;
+    height: 0px;
+}
+@flex-row-grow: {
+    flex-grow: 1;
+    width: 0px;
+}
