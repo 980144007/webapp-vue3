@@ -1,7 +1,6 @@
 
 <script setup name="bb-list">
 import {
-  defineProps,
   ref,
   watch,
   onActivated,

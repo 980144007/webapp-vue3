@@ -3,7 +3,8 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import router from 'router'
 import piniaPersist from 'pinia-plugin-persist'
-
+import { showToast, showSuccessToast, showFailToast } from 'vant';
+import 'vant/es/toast/style';
 import { createPinia } from 'pinia'
 import {
     useAxios,
@@ -21,6 +22,9 @@ import * as components from "components";
 window.$lodash = lodash;
 window.$cloneDeep = lodash.cloneDeep;
 window.$moment = moment;
+window.$toast = showToast;
+window.$successToast = showSuccessToast;
+window.$failToast = showFailToast;
 // import babyScroll from 'components/baby-scroll/index.js';
 const vm = createApp(App);
 const pinia = createPinia(); 
