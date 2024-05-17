@@ -24,3 +24,5 @@ system-commandline-sentinel-files/*
 *.njsproj
 *.sln
 *.sw?
+#other
+*-lock.*
