@@ -1,15 +1,13 @@
-import bBLoading from "./bb-loading"
-import bBList from "./bb-list"
-
-import bBPicker from "./bb-picker"
-
-import bBPagePicker from "./bb-page-picker"
-import bBMultiplePicker from "./bb-multiple-picker"
+import BbLoading from "./BbLoading";
+import BbList from "./BbList";
+import BbPicker from "./BbPicker";
+import BbPagePicker from "./BbPagePicker";
+import BbMultiplePicker from "./BbMultiplePicker";
 
 export {
-    bBLoading,
-    bBList,
-    bBPicker,
-    bBPagePicker,
-    bBMultiplePicker,
+    BbLoading,
+    BbList,
+    BbPicker,
+    BbPagePicker,
+    BbMultiplePicker
 }

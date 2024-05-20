@@ -1,6 +1,6 @@
 
 
-<script setup>
+<script setup name="BbPicker">
 import { ref, reactive, computed, watch } from "vue";
 const showPicker = ref(false);
 const pickerValue = reactive([])

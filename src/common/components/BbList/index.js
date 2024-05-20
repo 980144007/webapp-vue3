@@ -1,9 +1,9 @@
-import bBList from "./bb-list.vue";
+import BbList from "./BbList.vue";
 
 
 function install(vm) {
     if (!vm) return;
-    vm.component('bb-list', bBList);
+    vm.component('BbList', BbList);
 }
 
 // 判断是否是直接引入文件

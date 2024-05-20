@@ -1,8 +1,8 @@
-import picker from "./bb-page-picker.vue";
+import BbPagePicker from "./BbPagePicker.vue";
 
 function install(Vue) {
     if (!Vue) return;
-    Vue.component('bb-page-picker', picker);
+    Vue.component('BbPagePicker', BbPagePicker);
 }
 
 // 判断是否是直接引入文件

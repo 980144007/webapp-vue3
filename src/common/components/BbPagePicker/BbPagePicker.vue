@@ -1,6 +1,6 @@
 
 
-<script setup name="bb-page-picker">
+<script setup name="BbPagePicker">
 import { ref, reactive, computed, onMounted, onBeforeUnmount, watch } from "vue";
 
 const props = defineProps({

@@ -1,5 +1,5 @@
 
-<script setup name="bb-multiple-picker">
+<script setup name="BbMultiplePicker">
 import {
     reactive,
     ref,

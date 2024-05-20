@@ -1,5 +1,5 @@
 
-<script setup name="bb-list">
+<script setup name="BbList">
 import {
   ref,
   watch,
@@ -7,8 +7,7 @@ import {
   onDeactivated,
   nextTick,
   onMounted,
-  onBeforeUnmount,
-  defineExpose
+  onBeforeUnmount
 } from "vue";
 const {
     autoLoad,

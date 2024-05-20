@@ -1,11 +1,11 @@
 import { Loading } from 'vant';
 import "vant/lib/loading/style/index"
-import BbLoadingFun from "./bb-loadingFun";
+import BbLoadingFun from "./BbLoadingFun";
 const fn = new BbLoadingFun();
 
 function install(vm) {
     if (!vm) return;
-    vm.component("bb-loading", Loading);
+    vm.component("BbLoading", Loading);
     vm.provide("$loading", fn);
 }
 

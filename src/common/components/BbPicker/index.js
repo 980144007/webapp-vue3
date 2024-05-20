@@ -1,8 +1,8 @@
-import picker from "./bb-multiple-picker.vue";
+import BbPicker from "./BbPicker.vue";
 
 function install(Vue) {
     if (!Vue) return;
-    Vue.component('bb-multiple-picker', picker);
+    Vue.component('BbPicker', BbPicker);
 }
 
 // 判断是否是直接引入文件
