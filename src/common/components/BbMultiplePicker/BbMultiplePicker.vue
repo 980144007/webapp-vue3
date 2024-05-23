@@ -1,7 +1,6 @@
 
 <script setup name="BbMultiplePicker">
 import {
-    reactive,
     ref,
     computed,
     watch,
@@ -71,7 +70,7 @@ const {
 } = toRefs(props)
 
 const showPicker = ref(false);
-const pickerValue = reactive([]);
+const pickerValue = ref([]);
 const emits = defineEmits(["onVisible", "update:modelValue", "confirm"]);
 const selectedObjList = computed(() => {
     const valList = $cloneDeep(!multiple.value ? [modelValue.value] : modelValue.value);

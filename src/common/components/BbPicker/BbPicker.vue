@@ -1,9 +1,9 @@
 
 
 <script setup name="BbPicker">
-import { ref, reactive, computed, watch } from "vue";
+import { ref, computed, watch } from "vue";
 const showPicker = ref(false);
-const pickerValue = reactive([])
+const pickerValue = ref([])
 
 const props = defineProps({
     modelValue: {},

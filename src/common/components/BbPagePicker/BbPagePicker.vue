@@ -1,7 +1,7 @@
 
 
 <script setup name="BbPagePicker">
-import { ref, reactive, computed, onMounted, onBeforeUnmount, watch } from "vue";
+import { ref, computed, onMounted, onBeforeUnmount, watch } from "vue";
 
 const props = defineProps({
     modelValue: {},
@@ -53,7 +53,7 @@ const props = defineProps({
 const emit = defineEmits(["update:modelValue", "confirm", "onVisible"]);
 
 const showPicker = ref(false);
-const pickerValue = reactive([]);
+const pickerValue = ref([]);
 
 const selectedObjList = computed(() => {
     // console.log(88,props, props.options)

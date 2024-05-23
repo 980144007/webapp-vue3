@@ -27,7 +27,7 @@
   ],
   "dependencies": {
     "@vant/touch-emulator": "^1.4.0",
-    "axios": "^1.6.8",
+    "axios": "^1.7.0",
     "less": "^4.2.0",
     "less-loader": "^12.2.0",
     "lodash": "^4.17.21",
@@ -42,7 +42,7 @@
     "zipson": "^0.2.12"
   },
   "devDependencies": {
-    "@vant/auto-import-resolver": "^1.1.0",
+    "@vant/auto-import-resolver": "^1.2.0",
     "@vitejs/plugin-legacy": "^5.4.0",
     "@vitejs/plugin-vue": "^5.0.4",
     "rollup-plugin-esbuild": "^6.1.1",
