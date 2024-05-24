@@ -23,7 +23,9 @@
   },
   "keywords": [
     "vue3",
-    "模板"
+    "模板",
+    "vite",
+    "h5"
   ],
   "dependencies": {
     "@vant/touch-emulator": "^1.4.0",
