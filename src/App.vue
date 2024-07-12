@@ -42,7 +42,7 @@ document.addEventListener("click", onAppClick);
 </script>
 
 <template>
-  <div id="app-container" @click="getToken">
+  <div id="app-container">
     <router-view></router-view>
   </div>
 </template>
