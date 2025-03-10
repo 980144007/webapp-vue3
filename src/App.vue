@@ -16,6 +16,7 @@ watch(clickNum, (n) => {
   if(!n) return;
   updateVConsole();
 })
+
 const updateVConsole = () => {
   if(!vShow.value) {
     vConsole?.destroy?.();

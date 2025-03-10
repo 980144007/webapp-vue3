@@ -2,6 +2,7 @@
 <script setup name="BbList">
 import {
   ref,
+  toRefs,
   watch,
   onActivated,
   onDeactivated,
@@ -15,7 +16,7 @@ const {
     onLoadMore,
     errorText,
     delay,
-} = defineProps({
+} = toRefs(defineProps({
     autoLoad: {
         type: Boolean,
         default: true,
@@ -41,7 +42,7 @@ const {
             return str >= 0;
         }
     }
-})
+}));
 const cmRefresh = ref(null);
 const cmLoadMore = ref(null);
 const refreshing = ref(false);
@@ -151,7 +152,7 @@ const onScroll = (e) => {
 }
 
 if(onLoadMore) {
-    watch(onLoadMore, val => {
+    watch(() => onLoadMore, val => {
         init(!n);
     })
 }
