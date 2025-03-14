@@ -35,7 +35,7 @@ const props = defineProps({
     type: String,
     default: ""
   },
-  class: {
+  className: {
     default: ""
   }
 })
@@ -65,7 +65,7 @@ const onShowChange = () => {
 
 <template>
   <!-- <div class="bb-picker-container" ref="bb-picker"> -->
-  <van-field :class="class" :modelValue="modelValue" :name="name" :label="label" :required="required" readonly
+  <van-field :class="className" :modelValue="modelValue" :name="name" :label="label" :required="required" readonly
     :is-link="!props.disabled && !props.readonly" :disabled="props.disabled" @click.stop="onShowChange"
     :placeholder="props.disabled || props.readonly ? '' : placeholder || `请选择${label}`"
     :rules="rules[0] ? rules : [{ required, message: `请选择${label}` }]">

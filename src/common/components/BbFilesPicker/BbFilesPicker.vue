@@ -42,7 +42,7 @@ const props = defineProps({
   },
   maxSize: { //单位：KB
     default: Infinity
-  }
+  },
 })
 const uploader = ref(null);
 const emits = defineEmits(["onDone", "update:modelValue"]);
@@ -66,7 +66,7 @@ function uploadNow() {
 defineExpose({ uploadNow });
 
 function toPick() {
-  if(props.disabled || props.readonly || (props.maxCount !== Infinity && (fileList.value.length >= props.maxCount))) return;
+  if(props.disabled || props.readonly || (fileList.value.length >= props.maxCount)) return;
   uploader.value?.chooseFile();
 }
 
@@ -80,7 +80,7 @@ function deleteFile($randomId) {
 
 <template>
   <div class="bb-files-picker-container">
-    <van-field :name="name" :is-link="(!readonly && !disabled) && (maxCount === Infinity || fileList.length < maxCount)" :label="label" :required="required" readonly
+    <van-field :name="name" :is-link="(!readonly && !disabled) && (fileList.length < maxCount)" :label="label" :required="required" readonly
       :disabled="props.disabled" :placeholder="fileList.length > 0 ? '' : props.disabled || props.readonly ? '' : placeholder || `请选择${label}`"
       :rules="rules.length > 0 ? rules : [{ validator: () => {
         return fileList.length > 0;
@@ -90,8 +90,11 @@ function deleteFile($randomId) {
       </template>
     </van-field>
     <van-uploader ref="uploader" v-model="fileList" :multiple="multiple" :max-count="maxCount" :accept="accept"
-    :max-size="maxSize === Infinity ? maxSize : maxSize * 1024" :show-upload="false">
+    :max-size="maxSize * 1024" :show-upload="false">
     </van-uploader>
+    <slot name="tip">
+      <div class="tip" v-if="maxCount !== Infinity">最多可上传{{ maxCount }}个文件</div>
+    </slot>
     <div class="file-list-container" v-if="fileList.length > 0">
       <view class="file-line" v-for="({file, name, $randomId}) in fileList" :key="$randomId">
         <view class="name">{{ name || file.name }}</view>
@@ -115,6 +118,10 @@ function deleteFile($randomId) {
   :deep(.van-uploader) {
     display: none;
     
+  }
+  .tip {
+    padding: 4px 18px;
+    font-size: @font-size-xs;
   }
   .file-list-container {
     padding: 14px 18px;

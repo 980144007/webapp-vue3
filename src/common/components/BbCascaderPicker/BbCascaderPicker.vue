@@ -47,7 +47,7 @@ const props = defineProps({
     inputStyle: {
         type: String,
     },
-    class: {
+    className: {
         type: String,
     },
 })
@@ -94,7 +94,7 @@ const onShowChange = () => {
 <template>
     <!-- <div class="bb-picker-container" ref="bb-picker"> -->
         <van-field
-            :class="class"
+            :class="className"
             v-if="type === 'input'"
             :modelValue="selectedObj.label"
             :name="name"

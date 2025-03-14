@@ -18,7 +18,7 @@ import {
     decodeUri,
     getUrlParam
 } from "common/js/commonMethods";
-import * as components from "components";
+import BbLoading from "components/BbLoading"
 window.$lodash = lodash;
 window.$cloneDeep = lodash.cloneDeep;
 window.$moment = moment;
@@ -59,7 +59,5 @@ for(let key in directives) {
     if(!name) continue;
     vm.directive(name, directives[key])
 }
-for(let key in components) {
-    vm.use(components[key]);
-}
+vm.use(BbLoading);
 vm.mount('#app');

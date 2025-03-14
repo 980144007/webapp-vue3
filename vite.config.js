@@ -46,6 +46,7 @@ export default defineConfig(({mode}) => {
       vue(),
       Components({
         resolvers: [VantResolver()],
+        dirs: ['src/common/components'],
       }),
       requireTransform({}),
       mkcert(),
