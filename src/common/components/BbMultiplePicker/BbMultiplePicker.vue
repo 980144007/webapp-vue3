@@ -122,7 +122,7 @@ const onOptionClick = ({value}) => {
 
 
 <template>
-    <div class="bb-multiple-picker-container" ref="bb-picker">
+    <div class="bb-multiple-picker-container">
         <div class="input-box" @click.stop="onShowChange()">
             <slot>
                 <div :class="['value-box', !selectable ? 'disabled' : '']">

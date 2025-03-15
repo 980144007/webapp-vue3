@@ -35,9 +35,6 @@ const props = defineProps({
     type: String,
     default: ""
   },
-  className: {
-    default: ""
-  }
 })
 const emits = defineEmits(["onVisible", "update:modelValue", "confirm"]);
 watch(showPicker, (n) => {
@@ -64,7 +61,7 @@ const onShowChange = () => {
 </script>
 
 <template>
-  <!-- <div class="bb-picker-container" ref="bb-picker"> -->
+  <div class="bb-date-picker-container" ref="bb-picker">
   <van-field :class="className" :modelValue="modelValue" :name="name" :label="label" :required="required" readonly
     :is-link="!props.disabled && !props.readonly" :disabled="props.disabled" @click.stop="onShowChange"
     :placeholder="props.disabled || props.readonly ? '' : placeholder || `请选择${label}`"
@@ -80,7 +77,7 @@ const onShowChange = () => {
     <van-date-picker :modelValue="(modelValue || $moment().format('YYYY-MM-DD')).split('-')" @confirm="onConfirm"
       @cancel="showPicker = false" />
   </van-popup>
-  <!-- </div> -->
+  </div>
 
 
 </template>

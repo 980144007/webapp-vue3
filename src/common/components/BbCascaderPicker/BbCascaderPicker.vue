@@ -47,9 +47,6 @@ const props = defineProps({
     inputStyle: {
         type: String,
     },
-    className: {
-        type: String,
-    },
 })
 const emits = defineEmits(["onVisible", "update:modelValue", "confirm"]);
 watch(showPicker, (n) => {
@@ -92,9 +89,8 @@ const onShowChange = () => {
 </script>
 
 <template>
-    <!-- <div class="bb-picker-container" ref="bb-picker"> -->
+    <div class="bb-cascader-picker-container">
         <van-field
-            :class="className"
             v-if="type === 'input'"
             :modelValue="selectedObj.label"
             :name="name"
@@ -136,7 +132,7 @@ const onShowChange = () => {
               <!-- <template #options-top>555</template> -->
             </van-cascader>
         </van-popup>
-    <!-- </div> -->
+    </div>
     
 
 </template>

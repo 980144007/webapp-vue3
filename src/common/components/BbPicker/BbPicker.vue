@@ -65,7 +65,7 @@ const onShowChange = () => {
 </script>
 
 <template>
-    <div class="bb-picker-container" ref="bb-picker">
+    <div class="bb-picker-container">
         <div class="input-box" @click.stop="onShowChange">
             <slot>
                 <div :class="['value-box', !selectable ? 'disabled' : '']">
