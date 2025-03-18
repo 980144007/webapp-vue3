@@ -93,18 +93,18 @@ function base64ToBlob(base64) {
 }
 // 判断是否PC端
 function isPC() {
-    var userAgentInfo = navigator.userAgent;
-    var Agents = ["Android", "iPhone",
-          "SymbianOS", "Windows Phone",
-          "iPad", "iPod"];
-    var flag = true;
-    for (var v = 0; v < Agents.length; v++) {
-      if (userAgentInfo.indexOf(Agents[v]) >= 0) {
-        flag = false;
-        break;
-      }
-    }
-    return flag;
+  try {
+    // 静态定义设备标识符数组
+    const Agents = ["Android", "iPhone", "SymbianOS", "Windows Phone", "iPad", "iPod", "HarmonyOS"];
+    const userAgentInfo = navigator?.userAgent || '';
+
+    // 使用正则表达式进行匹配，提高效率
+    const agentRegex = new RegExp(Agents.join('|'), 'i');
+    return !agentRegex.test(userAgentInfo);
+  } catch (error) {
+    console.error('Error detecting device type:', error);
+    return false; // 默认返回false，表示未知设备类型
+  }
 }
 
 
