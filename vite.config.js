@@ -7,22 +7,25 @@ import requireTransform from 'vite-plugin-require-transform';
 import mkcert from "vite-plugin-mkcert";
 import legacyPlugin from '@vitejs/plugin-legacy';
 import esbuild from 'rollup-plugin-esbuild';
+import path from 'path';
+import OutputPlugin from './OutputPlugin';
 
 const date = new Date();
 const year = date.getFullYear();
 const month = date.getMonth() + 1;
 const day = date.getDate();
-const outputDir = `dist/${year}-${month}-${day}/webAppTemplate`;
-import path from 'path'
+const outputDir = `dist/${year}-${month}-${day}`;
+
 const https = false;
 
 export default defineConfig(({mode}) => {
   const env = loadEnv(mode, process.cwd());
+  const outDir = `${outputDir}/${loadEnv(mode, process.cwd()).VITE_PROJECT_NAME}`;
   return {
     base: "./",  
     assetsPublicPath :'./',
     build: {
-      outDir: outputDir,
+      outDir,
       rollupOptions: {
         input: {
           index: path.resolve(__dirname, `index.html`)
@@ -84,6 +87,10 @@ export default defineConfig(({mode}) => {
           'esnext.string.match-all'
         ]
       }),
+      OutputPlugin({
+        outputZipPath: `${outputDir}${env.VITE_PROJECT_DESC ? `(${env.VITE_PROJECT_DESC})` : ""}.zip`, // 自定义压缩包路径和名称
+        sourceDir: outputDir // 替换为实际的输出目录
+      })
     ],
     resolve: {
       alias: {

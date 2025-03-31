@@ -16,10 +16,10 @@
     "serve:test": "vite  --mode test",
     "start:test": "vite  --mode test",
     "build:test": "vite build  --mode test",
-    "dev:pro": "vite --mode pro",
-    "serve:pro": "vite  --mode pro",
-    "start:pro": "vite  --mode pro",
-    "build:pro": "vite build  --mode pro"
+    "dev:prod": "vite --mode prod",
+    "serve:prod": "vite  --mode prod",
+    "start:prod": "vite  --mode prod",
+    "build:prod": "vite build  --mode prod"
   },
   "keywords": [
     "vue3",
@@ -47,9 +47,11 @@
     "@vant/auto-import-resolver": "^1.2.0",
     "@vitejs/plugin-legacy": "^5.4.0",
     "@vitejs/plugin-vue": "^5.0.4",
+    "archiver": "^7.0.1",
+    "autoprefixer": "^10.4.19",
     "postcss": "^8.4.38",
     "postcss-preset-env": "^9.5.14",
-    "autoprefixer": "^10.4.19",
+    "rimraf": "^6.0.1",
     "rollup-plugin-esbuild": "^6.1.1",
     "sugarss": "^4.0.1",
     "terser": "^5.31.0",
