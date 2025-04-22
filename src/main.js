@@ -4,7 +4,7 @@ import App from './App.vue'
 import router from 'router'
 import piniaPersist from 'pinia-plugin-persist'
 import { showToast, showSuccessToast, showFailToast } from 'vant';
-import 'vant/es/toast/style';
+import 'vant/lib/toast/style';
 import { createPinia } from 'pinia'
 import {
     useAxios,

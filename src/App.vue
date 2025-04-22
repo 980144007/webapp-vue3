@@ -16,7 +16,9 @@ watch(clickNum, (n) => {
   if(!n) return;
   updateVConsole();
 })
-
+watch(vShow, (n) => {
+  window.localStorage.setItem("vShow", n);
+})
 const updateVConsole = () => {
   if(!vShow.value) {
     vConsole?.destroy?.();
