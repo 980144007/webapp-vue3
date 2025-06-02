@@ -40,6 +40,9 @@ const props = defineProps({
     type: String,
     default: '*'
   },
+  capture: {
+    type: String,
+  },
   maxSize: { //单位：KB
     default: Infinity
   },
@@ -67,7 +70,31 @@ defineExpose({ uploadNow });
 
 function toPick() {
   if(props.disabled || props.readonly || (fileList.value.length >= props.maxCount)) return;
-  uploader.value?.chooseFile();
+  uploader.value?.click?.();
+}
+
+function handleChange({target}) {
+  const num = props.maxCount - fileList.value.length;
+  if(num <= 0) {
+    this.$toast('最多上传' + props.maxCount + '个文件');
+    return;
+  }
+  let delNum = 0;
+  const list = Array.from(target.files).filter(({size}) => {
+    const isOverSize = size > props.maxSize * 1024;
+    if(isOverSize) {
+      delNum++;
+    }
+    return !isOverSize;
+  });
+  if(delNum > 0) {
+    this.$toast('文件过大，已自动过滤' + delNum + '个文件');
+  }
+  fileList.value = [...fileList.value, ...list.slice(0, num).map(item => ({file: item}))];
+  // this.$nextTick(() => {
+  //   console.log(this.fileList)
+  // })
+  target.value = null;
 }
 
 function deleteFile($randomId) {
@@ -81,17 +108,18 @@ function deleteFile($randomId) {
 <template>
   <div class="bb-files-picker-container">
     <van-field :name="name" :is-link="(!readonly && !disabled) && (fileList.length < maxCount)" :label="label" :required="required" readonly
-      :disabled="props.disabled" :placeholder="fileList.length > 0 ? '' : props.disabled || props.readonly ? '' : placeholder || `请选择${label}`"
-      :rules="rules.length > 0 ? rules : [{ validator: () => {
+      :disabled="disabled" :placeholder="fileList.length > 0 ? '' : disabled || readonly ? '' : placeholder || `请选择${label}`"
+      :rules="rules.length > 0 ? rules : required ? [{ validator: () => {
         return fileList.length > 0;
-      }, message: `请选择${label}` }]" @click-input="toPick">
+      }, message: `请选择${label}` }] : []" @click="toPick">
       <template #left-icon v-if="$slots['left-icon']">
         <slot name="left-icon"></slot>
       </template>
     </van-field>
-    <van-uploader ref="uploader" v-model="fileList" :multiple="multiple" :max-count="maxCount" :accept="accept"
+    <!-- <van-uploader ref="uploader" v-model="fileList" :multiple="multiple" :max-count="maxCount" :accept="accept"
     :max-size="maxSize * 1024" :show-upload="false">
-    </van-uploader>
+    </van-uploader> -->
+    <input class="uploader-input" ref="uploader" multiple type="file" :name="name" :accept="accept" :capture="capture" :disabled="disabled" @change="handleChange" />
     <slot name="tip">
       <div class="tip" v-if="maxCount !== Infinity">最多可上传{{ maxCount }}个文件</div>
     </slot>
@@ -124,7 +152,7 @@ function deleteFile($randomId) {
     font-size: @font-size-xs;
   }
   .file-list-container {
-    padding: 14px 18px;
+    padding: 14px 18px 14px calc(18px + 0.5em + 2px);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -144,6 +172,9 @@ function deleteFile($randomId) {
         margin-left: 4px;
       }
     }
+  }
+  .uploader-input {
+    display: none;
   }
   // :deep(.van-field__value) {
   //   width: 100%;
