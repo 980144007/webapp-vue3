@@ -3,6 +3,7 @@ import { defineConfig, loadEnv } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import Components from 'unplugin-vue-components/vite';
 import { VantResolver } from '@vant/auto-import-resolver';
+import AutoImport from 'unplugin-auto-import/vite';
 import requireTransform from 'vite-plugin-require-transform';
 import mkcert from "vite-plugin-mkcert";
 import legacyPlugin from '@vitejs/plugin-legacy';
@@ -19,8 +20,29 @@ const outputDir = `dist/${year}-${month}-${day}`;
 const https = false;
 
 export default defineConfig(({mode}) => {
-  const env = loadEnv(mode, process.cwd());
-  const outDir = `${outputDir}/${loadEnv(mode, process.cwd()).VITE_PROJECT_NAME}`;
+  const {
+    VITE_PROJECT_NAME,
+    VITE_PROJECT_DESC,
+    ...others
+  } = loadEnv(mode, process.cwd());
+  const outDir = `${outputDir}/${VITE_PROJECT_NAME}`;
+  const proxy = {};
+  for(let key in others) {
+    if(/_URL$/.test(key)) {
+      const url = others[key];
+      // console.log(key)
+      if(!url) {
+        continue;
+      }
+      proxy[`/${url}`] = {
+        // target: "http://192.168.37.83/api",//本地
+        target: url,//测试
+        changeOrigin: true,//开启跨域
+        // rewrite: (path) => path.replace(/^\/normalApi/, "")
+        rewrite: (path) => path.replace(new RegExp(`^/${url}`), "")
+      }
+    }
+  }
   return {
     base: "./",  
     assetsPublicPath :'./',
@@ -47,6 +69,9 @@ export default defineConfig(({mode}) => {
     },
     plugins: [
       vue(),
+      AutoImport({
+        resolvers: [VantResolver()],
+      }),
       Components({
         resolvers: [VantResolver()],
         dirs: ['src/common/components'],
@@ -88,7 +113,7 @@ export default defineConfig(({mode}) => {
         ]
       }),
       OutputPlugin({
-        outputZipPath: `${outputDir}${env.VITE_PROJECT_DESC ? `(${env.VITE_PROJECT_DESC})` : ""}.zip`, // 自定义压缩包路径和名称
+        outputZipPath: `${outputDir}${VITE_PROJECT_DESC ? `(${VITE_PROJECT_DESC})` : ""}.zip`, // 自定义压缩包路径和名称
         sourceDir: outputDir // 替换为实际的输出目录
       })
     ],
@@ -116,34 +141,11 @@ export default defineConfig(({mode}) => {
     server: {
       host: "0.0.0.0",
       https,
-      port: https ? 443 : 80,//设置服务启动端口号，是一个可选项，不要设置为本机的端口号，可能会发生冲突
+      port: https,//设置服务启动端口号，是一个可选项，不要设置为本机的端口号，可能会发生冲突
       // open:true,//是否自动打开浏览器，可选项
       cors: true,//允许跨域。
       // 设置代理
-      proxy: {
-        // 将请求代理到另一个服务器
-        [env.VITE_APP_API_BASE_URL]: {
-          target: env.VITE_APP_API_BASE_URL,//这是你要跨域请求的地址前缀
-          changeOrigin: true,//开启跨域
-          pathRewrite: {
-            [env.VITE_APP_API_BASE_URL]: ''
-          }
-        },
-        [env.VITE_APP_API_BASE_URL]: {
-          target: env.VITE_APP_API_BASE_URL,
-          changeOrigin: true,
-          pathRewrite: {
-            [env.VITE_APP_API_BASE_URL]: ''
-          }
-        },
-        [env.VITE_API_FILE_URL]: {
-          target: env.VITE_API_FILE_URL,
-          changeOrigin: true,
-          pathRewrite: {
-            [env.VITE_API_FILE_URL]: ''
-          }
-        }
-      }
+      proxy
     }
   }
 });

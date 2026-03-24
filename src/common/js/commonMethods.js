@@ -7,7 +7,38 @@ import { storeToRefs } from 'pinia';
 import { useMain } from 'stores';
 import qs from "qs";
 // const store = storeToRefs(useMain());
-
+import {
+  env,
+  biz
+} from "dingtalk-jsapi";
+function scan(options = {}) {
+  return new Promise((resolve, reject) => { 
+    biz.util.scan({
+      ...options,
+      onSuccess: ({ text }) => {
+        resolve(text);
+      },
+      onFail: (err) => {
+        console.log(222, err)
+        reject('扫码失败');
+      },
+    })
+  });
+}
+//根据value和获取树结构中对应的对象
+function getTreeNodeByCode(tree, value) {
+    for(let i = 0; i < tree.length; i++) {
+        const item = tree[i];
+        if(item.value === value) {
+            return tree[i];
+        }
+        const children = item.children;
+        if(children?.length) {
+            const obj = getTreeNodeByCode(children, value);
+            if(obj) return obj;
+        }
+    }
+}
 function decodeUri(url) {
     const newStr = decodeURIComponent(url);
     if(url === newStr) {
@@ -184,25 +215,46 @@ function getPath() {
     return (pathRE && pathRE[1]) || "/";
 }
 
-function getUrlParam({key, url = window.location.href} = {}) {
-    const searchParams = new URLSearchParams(url.split('?')[1]);
-    return key == null ? Object.fromEntries(searchParams) : searchParams.get(key);
+function getUrlParam(key, url = window.location.href) {
+    // 分离查询字符串部分
+    const queryString = url.split('?')[1];
+    
+    // 如果没有查询字符串，则直接返回 null 或一个空对象（取决于 key 是否提供）
+    if (!queryString) {
+        return Array.isArray(key) ? new Array(key.length).fill(undefined) : undefined;
+    }
+
+    // 使用 URLSearchParams 解析查询字符串
+    const searchParams = new URLSearchParams(queryString);
+
+    // 如果没有提供 key，则返回所有参数的键值对对象
+    if (key == null) {
+        return Object.fromEntries(searchParams.entries());
+    }
+    // 如果是数组，则返回一个包含所有 key 的数组
+    if (Array.isArray(key)) {
+        return key.map((k) => searchParams.get(k));
+    }
+    // 返回指定 key 的参数值
+    return searchParams.get(key);
 }
 
+//是否微信端
 function getIsWxClient () {
     return /micromessenger/i.test(navigator.userAgent);
 }
 
-// function getRunningEnv() {
-//     const {env} = require("dingtalk-jsapi");
-//     if(env.platform !== "notInDingTalk") {
-//         return 2;
-//     }
-//     if(getIsWxClient()) {
-//         return 1;
-//     }
-//     return 0;
-// }
+
+//获取当前运行环境（0：其它；1：微信端；2：钉钉端）
+function getRunningEnv() { 
+    if(env.platform !== "notInDingTalk") {
+        return 2;
+    }
+    if(getIsWxClient()) {
+        return 1;
+    }
+    return 0;
+}
 
 
 
@@ -345,7 +397,7 @@ export {
     getUrlParam,
     getIsWxClient,
     getPath,
-    // getRunningEnv,
+    getRunningEnv,
     strToArr,
     arrToStr,
     // uploadFiles,
@@ -353,5 +405,7 @@ export {
     compressImg,
     getDecodedSizeFromBase64,
     decodeUri,
-    // getFileUrl
+    // getFileUrl,
+    getTreeNodeByCode,
+    scan
 }

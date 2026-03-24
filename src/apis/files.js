@@ -1,14 +1,20 @@
 import axios from "axios";
 import { useUserInfo } from 'stores';
-
+const {
+  PROD,
+  VITE_API_FILE_URL,
+  VITE_API_FILE_UPLOAD_URL
+} = import.meta.env;
 function useAxios() {
     const store = useUserInfo();
     const download = axios.create({
-        baseURL: import.meta.env.VITE_API_FILE_URL,
+        // baseURL: import.meta.env.VITE_API_FILE_URL,
+        baseURL: `${!PROD ? "/" : ""}${VITE_API_FILE_URL}`,
         timeout: 10000,
     });
     const upload = axios.create({
-      baseURL: import.meta.env.VITE_API_FILE_UPLOAD_URL,
+      // baseURL: import.meta.env.VITE_API_FILE_UPLOAD_URL,
+      baseURL: `${!PROD ? "/" : ""}${VITE_API_FILE_UPLOAD_URL}`,
       timeout: 10000,
     });
     const reqConfig = (config) => {
@@ -51,7 +57,7 @@ function useAxios() {
       resConfig,  
       resError
     );
-    function makeOptions(options) {
+    function makeOptions(options, isUpload = true) {
         if(options?.onUpload) {
             options.onUploadProgress = function (progressEvent) {
                 // 处理原生进度事件
@@ -66,7 +72,7 @@ function useAxios() {
         }
         const form = new FormData();
         const data = options.data;
-        if(data) {
+        if(isUpload && data) {
           if(Array.isArray(data)) {
             data.forEach(({name: name = "file", value, fileName}) => {
               if(value && value.constructor && value.constructor.name === "File") {
@@ -81,7 +87,7 @@ function useAxios() {
               value, 
               fileName
             } = data;
-            if(val && val.constructor && val.constructor.name === "File") {
+            if(value && value.constructor && val.constructor.name === "File") {
               form.append(name, value, fileName || fileName === 0 ? fileName : value.name);
             } else {
               form.append(name, value);
@@ -106,9 +112,10 @@ function useAxios() {
     }
     fn.download = function(options) {
         const defultOptions = {
-          responseType: 'blob'
+          responseType: 'blob',
+          method: options.method || "get"
         };
-        return download({...defultOptions, ...makeOptions({...options, method: "get"}), method: "get"})
+        return download({...defultOptions, ...makeOptions({...options}, false)})
     }
     return fn;
 }

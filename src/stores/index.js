@@ -2,29 +2,30 @@
 import { defineStore } from 'pinia'
 
 import {
-    // getRunningEnv,
+    getRunningEnv,
     isPC,
-    // getUrlParam
+    getUrlParam
 } from "common/js/commonMethods";
 import userInfo from "./user";
+import deviceInfo from "./device";
 
 const actions = {
-    
+
 }
 
 const state = {
-    isLocal:  false,
-    // runningEnv: getRunningEnv(),
+    runningEnv: getRunningEnv(),
     isPc: isPC(),
 }
 
 const config = import.meta.env;
-
 const getters = {
     corpId: () => {
-        return config.VITE_CORP_ID;
+        return VITE_CORP_ID;
     },
-    
+    fileHead: () => {
+        return config.VITE_API_FILE_URL;
+    },
 }
 
 export const useMain = defineStore('main', {
@@ -34,3 +35,4 @@ export const useMain = defineStore('main', {
 })
 
 export const useUserInfo = userInfo;
+export const useDeviceInfo = deviceInfo;

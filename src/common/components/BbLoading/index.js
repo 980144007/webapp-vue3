@@ -7,6 +7,7 @@ function install(vm) {
     if (!vm) return;
     vm.component("BbLoading", Loading);
     vm.provide("$loading", fn);
+    window.$loading = fn;
 }
 
 // 判断是否是直接引入文件

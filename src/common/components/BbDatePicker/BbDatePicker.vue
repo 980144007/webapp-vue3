@@ -58,24 +58,36 @@ const onShowChange = () => {
   showPicker.value = !showPicker.value;
 }
 
+const formatter = (type, option) => {
+  if (type === 'year') {
+    option.text += '年';
+  }
+  if (type === 'month') {
+    option.text += '月';
+  }
+  if (type === 'day') {
+    option.text += '日';
+  }
+  return option;
+};
 </script>
 
 <template>
   <div class="bb-date-picker-container" ref="bb-picker">
-  <van-field :class="className" :modelValue="modelValue" :name="name" :label="label" :required="required" readonly
+  <van-field :modelValue="modelValue" :name="name" :label="label" :required="required" readonly
     :is-link="!props.disabled && !props.readonly" :disabled="props.disabled" @click.stop="onShowChange"
     :placeholder="props.disabled || props.readonly ? '' : placeholder || `请选择${label}`"
     :rules="rules[0] ? rules : [{ required, message: `请选择${label}` }]">
     <template #left-icon v-if="$slots['left-icon']">
       <slot name="left-icon"></slot>
     </template>
-    <template #button v-if="clearable && modelValue !== undefined && !props.disabled && !props.readonly">
+    <template #button v-if="clearable && (!!modelValue || modelValue === 0) && !props.disabled && !props.readonly">
       <van-icon :color="iconColor" name="clear" @click.stop="clear" />
     </template>
   </van-field>
-  <van-popup v-model:show="showPicker" round position="bottom" teleport="body">
+  <van-popup v-model:show="showPicker" round position="bottom" teleport="body" close-on-click-overlay>
     <van-date-picker :modelValue="(modelValue || $moment().format('YYYY-MM-DD')).split('-')" @confirm="onConfirm"
-      @cancel="showPicker = false" />
+      @cancel="showPicker = false" :formatter="formatter" />
   </van-popup>
   </div>
 

@@ -6,25 +6,25 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
-system-commandline-sentinel-files
-dotnet-suggest-registration-git-credential-manager-core*
+
 node_modules
+.DS_Store
 dist
 dist-ssr
+coverage
 *.local
-system-commandline-sentinel-files
-system-commandline-sentinel-files/*
+
+/cypress/videos/
+/cypress/screenshots/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
 .idea
-.DS_Store
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
-#other
-*-lock.*
 
-helper.json
+*.tsbuildinfo
