@@ -1,12 +1,12 @@
 <template>
   <div class="bb-tabbar-container" :class="{'hide-tabs': followFullScreen && deviceStore.isFullScreen}">
-    <van-tabbar v-if="slotList.length > 1 && navPosition === 'top' && !(followFullScreen && deviceStore.isFullScreen)" v-model="activeName" :fixed="false">
+    <van-tabbar v-bind="vanProps" v-if="slotList.length > 1 && navPosition === 'top' && !(followFullScreen && deviceStore.isFullScreen)" v-model="activeName" :fixed="false">
       <van-tabbar-item v-for="(slot, index) in slotList" :key="index" :name="slot.props.name" :icon="slot.props?.icon">{{ slot.props?.title }}</van-tabbar-item>
     </van-tabbar>
     <div class="main-container">
       <component v-for="(slot, index) in slotList" :key="slot.props?.name" v-show="activeName === slot.props.name" :is="slot" />
     </div>
-    <van-tabbar v-if="slotList.length > 1 && navPosition === 'bottom' && !(followFullScreen && deviceStore.isFullScreen)" v-model="activeName" :fixed="false">
+    <van-tabbar v-bind="vanProps" v-if="slotList.length > 1 && navPosition === 'bottom' && !(followFullScreen && deviceStore.isFullScreen)" v-model="activeName" :fixed="false">
       <van-tabbar-item v-for="(slot, index) in slotList" :key="index" :name="slot.props.name" :icon="slot.props?.icon">
           <span>{{ slot.props?.title }}</span>
           <template #icon="props">
@@ -50,6 +50,10 @@ const props = defineProps({
   followFullScreen: {
     type: Boolean,
     default: false
+  },
+  vanProps: {
+    type: Object,
+    default: () => ({})
   }
 })
 
