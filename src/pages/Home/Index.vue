@@ -1,10 +1,15 @@
 <template>
   <div class="page-about-monitor-container">
-    <BbTabbar v-model="activeName" followFullScreen navPosition="bottom">
+    <!-- <BbTabbar v-model="activeName" followFullScreen navPosition="bottom">
       <PageMin title="待办" name="ToDo" icon="friends-o"></PageMin>
       <PageMin title="我的" name="Mine" icon="user-o"></PageMin>
       <PageMin title="设置" name="Setting" icon="setting-o"></PageMin>
-    </BbTabbar>
+    </BbTabbar> -->
+    <BbTabs v-model="activeName">
+      <PageMin title="待办" name="ToDo" icon="friends-o"></PageMin>
+      <PageMin title="我的" name="Mine" icon="user-o"></PageMin>
+      <PageMin title="设置" name="Setting" icon="setting-o"></PageMin>
+    </BbTabs>
   </div>
 </template>
 

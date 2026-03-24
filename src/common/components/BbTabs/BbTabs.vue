@@ -1,38 +1,49 @@
 <template>
   <div class="bb-tabs-container" :class="[hideTabs ? 'hide-tabs' : '', size]">
-    <van-tabs ref="tabsRef" v-model:active="activeName" :lazy-render="true">
-      <van-tab v-for="({ name, title, component, ...other }) in list" :key="name" :name="name" :title="title">
-        <component :is="component" v-bind="other"></component>
+    <van-tabs v-bind="vanProps" ref="tabsRef" v-model:active="activeName" :lazy-render="true">
+      <van-tab v-for="(slot, index) in slotList" :key="slot.props?.name" :name="slot.props?.name" :title="slot.props?.title">
+        <component :is="slot"></component>
       </van-tab>
     </van-tabs>
   </div>
 </template>
-<script setup lang="ts">
+<script setup name="BbTabs">
 import {
   computed,
   watch,
-  ref
+  ref,
+  useSlots
 } from 'vue'
 import { useDeviceInfo } from "@/stores";
 const deviceStore = useDeviceInfo();
-
+const slots = useSlots();
+const slotList = computed(() => {
+  const list = slots.default()
+  return list.filter((item) => {
+    const haveName = item.props?.name || item.props?.name === 0
+    const haveTitle = item.props?.title || item.props?.title === 0
+    if(!haveName) {
+      throw new Error('BbTabs 组件slot必须有 name 属性')
+    }
+    if(!haveTitle) {
+      throw new Error('BbTabs 组件slot必须有 title 属性')
+    }
+    return haveName && haveTitle
+  })
+})
 const props = defineProps({
   modelValue: {},
-  list: {
-    type: Array,
-    default: () => []
-  },
-  navPosition: {
+  size: {
     type: String,
-    default: 'bottom'
+    default: 'normal'
   },
   followFullScreen: {
     type: Boolean,
     default: false
   },
-  size: {
-    type: String,
-    default: 'normal'
+  vanProps: {
+    type: Object,
+    default: () => ({})
   }
 })
 const tabsRef = ref(null)
