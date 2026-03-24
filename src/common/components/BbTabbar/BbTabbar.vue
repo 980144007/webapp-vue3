@@ -39,7 +39,6 @@ const slotList = computed(() => {
     return haveName && haveTitle
   })
 })
-console.log(112, slotList.value)
 
 const deviceStore = useDeviceInfo();
 const props = defineProps({

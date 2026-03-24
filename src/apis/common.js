@@ -250,7 +250,7 @@ function getAllDepartments(valueKey = "absoluteId") {
           return acc + `${cur.value},`;
         }, "").replace(/,$/, "")
       }
-      console.log(1122, theAllObj)
+      // console.log(1122, theAllObj)
       resolve([theAllObj, ...newList]);
     }).catch(() => {
       reject("获取部门列表失败");
