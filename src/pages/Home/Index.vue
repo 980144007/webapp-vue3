@@ -1,6 +1,17 @@
 <template>
   <div class="page-about-monitor-container">
-    <BbTabs v-model="activeName">
+    <BbTabbar v-model="activeName">
+      <component
+        v-for="item in tabsList"
+        :key="item.name"
+        :is="item.component"
+        :name="item.name"
+        :title="item.title"
+        :icon="item.icon"
+      >
+      </component>
+    </BbTabbar>
+    <!-- <BbTabs v-model="activeName">
       <component
         v-for="item in tabsList"
         :key="item.name"
@@ -9,7 +20,7 @@
         :title="item.title"
       >
       </component>
-    </BbTabs>
+    </BbTabs> -->
   </div>
 </template>
 
