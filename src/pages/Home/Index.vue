@@ -12,7 +12,7 @@
       </component>
     </BbTabbar> -->
     <BbTabs v-model="activeName" :vanProps="{
-        swipeable: true,
+        swipeable: false,
       }">
       <component
         v-for="item in tabsList"

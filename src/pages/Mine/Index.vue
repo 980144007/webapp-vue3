@@ -20,6 +20,8 @@
 <script setup name="Mine">
 import { ref } from "vue";
 
+const faceOpacity = ref(0.6);
+
 const rotateX = ref(-30);
 const rotateY = ref(45);
 
@@ -98,36 +100,35 @@ const handleTouchEnd = () => {
       font-size: 30px;
       font-weight: bold;
       color: white;
-      opacity: 0.8;
       backface-visibility: visible;
       
       &:nth-child(1) {
-        background-color: rgba(255, 0, 0, 0.7);
+        background-color: rgba(255, 0, 0, v-bind(faceOpacity));
         transform: translateZ(100px);
       }
 
       &:nth-child(2) {
-        background-color: rgba(0, 255, 0, 0.7);
+        background-color: rgba(0, 255, 0, v-bind(faceOpacity));
         transform: rotateY(180deg) translateZ(100px);
       }
 
       &:nth-child(3) {
-        background-color: rgba(0, 0, 255, 0.7);
+        background-color: rgba(0, 0, 255, v-bind(faceOpacity));
         transform: rotateY(90deg) translateZ(100px);
       }
 
       &:nth-child(4) {
-        background-color: rgba(255, 255, 0, 0.7);
+        background-color: rgba(255, 255, 0, v-bind(faceOpacity));
         transform: rotateY(-90deg) translateZ(100px);
       }
 
       &:nth-child(5) {
-        background-color: rgba(255, 0, 255, 0.7);
+        background-color: rgba(255, 0, 255, v-bind(faceOpacity));
         transform: rotateX(90deg) translateZ(100px);
       }
 
       &:nth-child(6) {
-        background-color: rgba(0, 255, 255, 0.7);
+        background-color: rgba(0, 255, 255, v-bind(faceOpacity));
         transform: rotateX(-90deg) translateZ(100px);
       }
     }
