@@ -26,7 +26,14 @@ import { useDeviceInfo } from '@/stores'
 
 const slots = useSlots();
 const slotList = computed(() => {
-  const list = slots.default()
+  const list = (slots.default?.() || []).reduce((prev, cur) => {
+    if (cur.children) {
+      prev.push(...cur.children)
+    } else {
+      prev.push(cur)
+    }
+    return prev
+  }, [])
   return list.filter((item) => {
     const haveName = item.props?.name || item.props?.name === 0
     const haveTitle = item.props?.title || item.props?.title === 0

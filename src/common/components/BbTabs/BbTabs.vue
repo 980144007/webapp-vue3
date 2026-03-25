@@ -18,7 +18,16 @@ import { useDeviceInfo } from "@/stores";
 const deviceStore = useDeviceInfo();
 const slots = useSlots();
 const slotList = computed(() => {
-  const list = slots.default()
+  const list = (slots.default?.() || []).reduce((prev, cur) => {
+    if (cur.children) {
+      prev.push(...cur.children)
+    } else {
+      prev.push(cur)
+    }
+    return prev
+  }, [])
+  // console.log(list)
+  // return list
   return list.filter((item) => {
     const haveName = item.props?.name || item.props?.name === 0
     const haveTitle = item.props?.title || item.props?.title === 0
@@ -31,6 +40,7 @@ const slotList = computed(() => {
     return haveName && haveTitle
   })
 })
+
 const props = defineProps({
   modelValue: {},
   size: {
@@ -44,7 +54,26 @@ const props = defineProps({
   vanProps: {
     type: Object,
     default: () => ({})
+  },
+  tabs: {
+    type: Array,
+    default: () => []
   }
+})
+
+const displayList = computed(() => {
+  if (props.tabs && props.tabs.length > 0) {
+    return props.tabs.map(item => ({
+      name: item.name,
+      title: item.title,
+      component: item.component
+    }))
+  }
+  return slotList.value.map(slot => ({
+    name: slot.props?.name,
+    title: slot.props?.title,
+    component: slot
+  }))
 })
 const tabsRef = ref(null)
 const hideTabs = computed(() => {
