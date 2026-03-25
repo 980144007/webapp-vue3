@@ -113,4 +113,7 @@ html,body,#app,#app-container {
   }
   
 }
+.van-tab__panel-wrapper--inactive {
+  height: 100%!important;
+}
 </style>

@@ -1,6 +1,6 @@
 <template>
   <div class="page-about-monitor-container">
-    <BbTabbar v-model="activeName">
+    <!-- <BbTabbar v-model="activeName">
       <component
         v-for="item in tabsList"
         :key="item.name"
@@ -10,8 +10,10 @@
         :icon="item.icon"
       >
       </component>
-    </BbTabbar>
-    <!-- <BbTabs v-model="activeName">
+    </BbTabbar> -->
+    <BbTabs v-model="activeName" :vanProps="{
+        swipeable: true,
+      }">
       <component
         v-for="item in tabsList"
         :key="item.name"
@@ -20,7 +22,7 @@
         :title="item.title"
       >
       </component>
-    </BbTabs> -->
+    </BbTabs>
   </div>
 </template>
 
