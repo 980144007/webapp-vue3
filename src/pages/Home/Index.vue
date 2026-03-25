@@ -67,7 +67,7 @@ const urlTabName = computed(() => route.query.tabbarName);
 const activeName = computed({
   get() {
     const urlName = urlTabName.value;
-    return urlName || "ToDo";
+    return urlName || tabsList.value?.[0]?.name;
   },
   set(val) {
     router.replace({ query: { tabbarName: val } });
