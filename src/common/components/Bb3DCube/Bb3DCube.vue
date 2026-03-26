@@ -64,15 +64,15 @@ let touchStartX = 0;
 let touchStartY = 0;
 let isTouching = false;
 
-const handleMouseMove = (e) => {
-  rotateX.value = -30 + (e.clientY / window.innerHeight - 0.5) * 60;
-  rotateY.value = 45 + (e.clientX / window.innerWidth - 0.5) * 60;
+const handleMouseMove = ({clientX, clientY}) => {
+  rotateX.value = -30 + (clientY / window.innerHeight - 0.5) * 60;
+  rotateY.value = 45 + (clientX / window.innerWidth - 0.5) * 60;
 };
 
-const handleTouchStart = (e) => {
+const handleTouchStart = ({touches: [{clientX, clientY}]}) => {
   isTouching = true;
-  touchStartX = e.touches[0].clientX;
-  touchStartY = e.touches[0].clientY;
+  touchStartX = clientX;
+  touchStartY = clientY;
 };
 
 const handleTouchMove = (e) => {
