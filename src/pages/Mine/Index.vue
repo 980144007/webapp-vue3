@@ -17,6 +17,5 @@
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  background-color: #000000;
 }
 </style>
