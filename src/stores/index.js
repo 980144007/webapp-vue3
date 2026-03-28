@@ -8,6 +8,7 @@ import {
 } from "common/js/commonMethods";
 import userInfo from "./user";
 import deviceInfo from "./device";
+import languageInfo from "./language";
 
 const actions = {
 
@@ -36,3 +37,4 @@ export const useMain = defineStore('main', {
 
 export const useUserInfo = userInfo;
 export const useDeviceInfo = deviceInfo;
+export const useLanguage = languageInfo;

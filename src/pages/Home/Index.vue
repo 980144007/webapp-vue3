@@ -11,6 +11,7 @@
       >
       </component>
     </BbTabbar> -->
+
     <BbTabs v-model="activeName" :vanProps="{
         swipeable: false,
       }">
@@ -27,8 +28,8 @@
 </template>
 
 <script setup name="Home">
-import PageMin from "pages/Mine/Index.vue";
 import { useRoute, useRouter } from "vue-router";
+import { useI18n } from 'vue-i18n'
 
 import {
   shallowReactive,
@@ -40,6 +41,7 @@ import {
 } from "vue";
 import { useUserInfo } from "stores";
 const { user } = useUserInfo();
+const { t } = useI18n();
 
 const route = useRoute();
 const router = useRouter();
@@ -51,13 +53,13 @@ const tabsList = computed(() => {
   return [
     {
       name: "ToDo",
-      title: "待办",
+      title: t('home.toDo'),
       icon: "friends-o",
       component: defineAsyncComponent(() => import("pages/Mine/Index.vue")),
     },
     {
       name: "Mine",
-      title: "我的",
+      title: t('home.mine'),
       icon: "friends-o",
       component: defineAsyncComponent(() => import("pages/Mine/Index.vue")),
     },

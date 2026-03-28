@@ -5,6 +5,7 @@ import router from 'router'
 import piniaPersist from 'pinia-plugin-persistedstate'
 import { createPinia } from 'pinia'
 import { showSuccessToast, showFailToast, Toast } from 'vant';
+import i18n, { setupI18n } from './i18n'
 
 import {
     useAxios,
@@ -19,10 +20,14 @@ import {
     getUrlParam
 } from "common/js/commonMethods";
 import BbLoading from "components/BbLoading"
+import { useLanguage } from 'stores'
 const vm = createApp(App);
 const pinia = createPinia(); 
 pinia.use(piniaPersist);
-vm.use(router).use(pinia);
+vm.use(router).use(pinia).use(i18n);
+
+const languageStore = useLanguage()
+setupI18n(languageStore)
 const axios = useAxios();
 const fileFetch = useFileFetch();
 

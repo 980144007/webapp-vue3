@@ -129,6 +129,8 @@ export default defineConfig(({mode}) => {
         "apis": path.resolve(__dirname, "src/apis"),
         "directives": path.resolve(__dirname, "src/directives"),
         "mixins": path.resolve(__dirname, "src/mixins"),
+        "i18n": path.resolve(__dirname, "src/i18n"),
+        "langs": path.resolve(__dirname, "src/i18n/langs"),
       },
     },
     css: {
