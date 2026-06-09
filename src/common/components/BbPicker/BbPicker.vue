@@ -62,6 +62,10 @@ const props = defineProps({
   valueKey: {
     type: String,
     default: "value"
+  },
+  multiple: {
+    type: Boolean,
+    default: false
   }
 })
 const emits = defineEmits(["onVisible", "update:modelValue", "confirm"]);
@@ -80,14 +84,22 @@ watch(showPicker, (n) => {
   if(!props.modelValue && props.modelValue !== 0) {
     pickerValue.value = []
   } else {
-    const item = optionList.value.find(({ value }) => props.modelValue === value);
-    // console.log(123, item)
-    pickerValue.value = !item ? [] : [item.value];
+    if(!props.multiple) {
+      const item = optionList.value.find(({ value }) => props.modelValue === value);
+      pickerValue.value = !item ? [] : [item.value];
+    } else {
+      pickerValue.value = optionList.value.map((group, index) => {
+        const item = group.find(({ value }) => props.modelValue[index] === value);
+        return item?.value;
+      })
+    }
   }
 })
-const onConfirm = ({ selectedOptions: [result] }) => {
-  emits("update:modelValue", result.value);
-  emits("confirm", result[0]);
+const onConfirm = ({ selectedOptions }) => {
+  const multiple = props.multiple;
+  const result = !multiple ? selectedOptions[0] : selectedOptions;
+  emits("update:modelValue", !multiple ? result.value : result.map(({ value }) => value));
+  emits("confirm", !multiple ? result[0] : result);
   onShowChange();
 }
 
@@ -124,7 +136,6 @@ const onShowChange = () => {
     </van-field>
     <div v-else class="input-box" @click.stop="onShowChange">
       <slot>
-
         <div :class="['value-box', !disabled ? 'disabled' : '']">
           <input :name="name" :rules="rules" :class="{ value: true, border }" :placeholder="placeholder" readonly
             type="text" :style="inputStyle" :value="selectedObj.text || ''">
