@@ -66,6 +66,10 @@ const props = defineProps({
   multiple: {
     type: Boolean,
     default: false
+  },
+  size: {
+    type: String,
+    default: "normal"
   }
 })
 const emits = defineEmits(["onVisible", "update:modelValue", "confirm"]);
@@ -81,10 +85,10 @@ const optionList = computed(() => {
 watch(showPicker, (n) => {
   emits("onVisible", n);
   if (!n) return;
-  if(!props.modelValue && props.modelValue !== 0) {
+  if (!props.modelValue && props.modelValue !== 0) {
     pickerValue.value = []
   } else {
-    if(!props.multiple) {
+    if (!props.multiple) {
       const item = optionList.value.find(({ value }) => props.modelValue === value);
       pickerValue.value = !item ? [] : [item.value];
     } else {
@@ -110,7 +114,7 @@ function clear() {
 }
 
 const onShowChange = () => {
-  if (props.readonly) return;
+  if (props.readonly || props.disabled) return;
   if (optionList.length === 0) {
     $failToast("无选项");
     return;
@@ -121,8 +125,8 @@ const onShowChange = () => {
 </script>
 
 <template>
-  <div class="bb-picker-container">
-    <van-field v-if="type === 'input'" :modelValue="selectedObj.text || ''" :name="name" :label="label"
+  <div class="bb-picker-container" :class="{ border: border }">
+    <van-field :size="size" v-if="type === 'input'" :modelValue="selectedObj.text || ''" :name="name" :label="label"
       :required="required" readonly :is-link="!disabled && !props.readonly" :disabled="disabled"
       :rules="rules[0] ? rules : [{ required, message: `请选择${label}` }]"
       :placeholder="(disabled || props.readonly) && !holdPlaceholder ? '' : placeholder || `请选择${label}`"
@@ -161,6 +165,25 @@ const onShowChange = () => {
 //     box-sizing: border-box;
 //     @flex-row-center();
 //     color: @theme-color;
+.bb-picker-container {
+  position: relative;
+
+  &.border {
+    &::after {
+      position: absolute;
+      box-sizing: border-box;
+      content: " ";
+      pointer-events: none;
+      right: var(--van-padding-md);
+      bottom: 0;
+      left: var(--van-padding-md);
+      border-bottom: 1px solid var(--van-cell-border-color);
+      transform: scaleY(.5);
+    }
+  }
+
+}
+
 .input-box {
   // @full();
 }

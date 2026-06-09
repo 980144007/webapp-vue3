@@ -1,10 +1,18 @@
 <script setup name="BbFilesPicker">
 import {
-  defineExpose,
   computed,
   ref,
 } from "vue";
+import {
+  uploadFiles
+} from "apis/common"
+import {
+  useMain
+} from "stores";
 
+const {
+  fileHead
+} = useMain();
 const props = defineProps({
   modelValue: {},
   readonly: {
@@ -53,8 +61,28 @@ const fileList = computed({
   get() {
     const list = props.modelValue || [];
     return list.map((item) => {
+      let obj = {};
+      if(typeof item === "string") {
+        const suffix = item?.split('.').pop();
+        obj = {
+          originalUrl: item,
+          url: `${fileHead}${item}`,
+          name: item?.split('/').pop(),
+          suffix,
+          type: window.$getFileType(suffix)
+        }
+      } else {
+        const suffix = item?.url?.split('.').pop();
+        obj = {
+          name: item?.url?.split('/').pop(),
+          originalUrl: item?.url,
+          suffix,
+          ...item,
+          type: window.$getFileType(suffix),
+        }
+      }
       return {
-        ...item,
+        ...obj,
         $randomId: item.$randomId || (Math.random() * 1000000).toString()
       }
     });
@@ -74,13 +102,15 @@ function toPick() {
 }
 
 function handleChange({target}) {
+  
   const num = props.maxCount - fileList.value.length;
   if(num <= 0) {
-    this.$toast('最多上传' + props.maxCount + '个文件');
+    this.showToast('最多上传' + props.maxCount + '个文件');
     return;
   }
   let delNum = 0;
-  const list = Array.from(target.files).filter(({size}) => {
+  const ls = Array.from(target.files).slice(0, num);
+  const list = ls.filter(({size}) => {
     const isOverSize = size > props.maxSize * 1024;
     if(isOverSize) {
       delNum++;
@@ -88,15 +118,44 @@ function handleChange({target}) {
     return !isOverSize;
   });
   if(delNum > 0) {
-    this.$toast('文件过大，已自动过滤' + delNum + '个文件');
+    this.showToast('文件过大，已自动过滤' + delNum + '个文件');
   }
-  fileList.value = [...fileList.value, ...list.slice(0, num).map(item => ({file: item}))];
+  $loading.open();
+  uploadFiles(list.map(fileItem => ({file: fileItem}))).then(resList => {
+    fileList.value = [...fileList.value, ...resList];
+    // console.log(999, resList)
+  }).catch((msg) => {
+    $toast(msg || "上传失败");
+  }).finally(() => {
+    $loading.close();
+  })
+  // fileList.value = [...fileList.value, ...list.slice(0, num).map(item => ({file: item}))];
   // this.$nextTick(() => {
   //   console.log(this.fileList)
   // })
   target.value = null;
 }
 
+
+function imagePreview($randomId) {
+  // console.log(fileList.value)
+  let pIndex = 0;
+  const list = fileList.value.filter(({type, url}) => {
+    return type === "image";
+  }).map(({url, $randomId: randomId}, index) => {
+    if($randomId === randomId) {
+      pIndex = index;
+    }
+    return url;
+  });
+  showImagePreview({
+    images: list,
+    startPosition: pIndex,
+  })
+  // console.log(pIndex, list)
+}
+
+// 删除文件
 function deleteFile($randomId) {
   fileList.value = fileList.value.filter(({ $randomId: id }) => {
     return id !== $randomId;
@@ -124,8 +183,9 @@ function deleteFile($randomId) {
       <div class="tip" v-if="maxCount !== Infinity">最多可上传{{ maxCount }}个文件</div>
     </slot>
     <div class="file-list-container" v-if="fileList.length > 0">
-      <view class="file-line" v-for="({file, name, $randomId}) in fileList" :key="$randomId">
-        <view class="name">{{ name || file.name }}</view>
+      <view class="file-line" v-for="({name, type, $randomId}, index) in fileList" :key="$randomId">
+        <view class="name">{{ name }}</view>
+        <van-icon v-if="type === 'image'" class="delete-btn" name="eye-o" color="#E96736" @click="imagePreview($randomId)" />
         <van-icon class="delete-btn" name="close" color="#E96736" @click="deleteFile($randomId)" />
       </view>
     </div>
@@ -152,7 +212,7 @@ function deleteFile($randomId) {
     font-size: @font-size-xs;
   }
   .file-list-container {
-    padding: 14px 18px 14px calc(18px + 0.5em + 2px);
+    padding: 14px 18px 14px calc(18px + 2px);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -163,6 +223,9 @@ function deleteFile($randomId) {
       // border-bottom: 1px dashed #f1f1f1;
       & + .file-line {
         margin-top: 8px;
+      }
+      &.image {
+        text-decoration: underline;
       }
       .name {
         flex-grow: 1;

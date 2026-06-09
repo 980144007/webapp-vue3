@@ -2,10 +2,11 @@ import '@vant/touch-emulator';
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from 'router'
-import piniaPersist from 'pinia-plugin-persist'
-import { showToast, showSuccessToast, showFailToast } from 'vant';
-import 'vant/lib/toast/style';
+import piniaPersist from 'pinia-plugin-persistedstate'
 import { createPinia } from 'pinia'
+import { showSuccessToast, showFailToast, Toast } from 'vant';
+import i18n, { setupI18n } from './i18n'
+
 import {
     useAxios,
     useFileFetch
@@ -19,33 +20,47 @@ import {
     getUrlParam
 } from "common/js/commonMethods";
 import BbLoading from "components/BbLoading"
-window.$lodash = lodash;
-window.$cloneDeep = lodash.cloneDeep;
-window.$moment = moment;
-window.$toast = showToast;
-window.$successToast = showSuccessToast;
-window.$failToast = showFailToast;
-// import babyScroll from 'components/baby-scroll/index.js';
+import { useLanguage } from 'stores'
 const vm = createApp(App);
 const pinia = createPinia(); 
 pinia.use(piniaPersist);
-vm.use(router).use(pinia);
+vm.use(router).use(pinia).use(i18n);
+
+const languageStore = useLanguage()
+setupI18n(languageStore)
 const axios = useAxios();
 const fileFetch = useFileFetch();
 
 const commonFns = {
-    post: axios.post,
-    get: axios.get,
-    uploadFile: fileFetch.upload,
-    downloadFile: fileFetch.download,
-    axios,
-    lodash,
-    cloneDeep: lodash.cloneDeep,
-    moment,
-    qs,
-    decodeUri,
-    getUrlParam
-}
+  post: axios.post,
+  get: axios.get,
+  uploadFile: fileFetch.upload,
+  downloadFile: fileFetch.download,
+  axios,
+  lodash,
+  cloneDeep: lodash.cloneDeep,
+  moment,
+  qs,
+  decodeUri,
+  getUrlParam,
+  failToast: showFailToast,
+  successToast: showSuccessToast,
+  toast: Toast,
+  getFileType: (suffix) => {
+    const types = {
+      image: ["jpg", "jpeg", "png", "gif", "bmp", "webp"],
+    };
+    for (let key in types) {
+      const checked = types[key].some((item) => {
+        return item === suffix?.toLowerCase();
+      });
+      if (checked) {
+        return key;
+      }
+    }
+    return "other";
+  },
+};
 
 for(const key in commonFns) {
     const name = /^\$/.test(key) ? key : `$${key}`;

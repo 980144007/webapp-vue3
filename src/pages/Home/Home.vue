@@ -5,7 +5,7 @@
 
 <template>
     <div class="page-home-container">
-      <BbList />
+
     </div>
 </template>
 
@@ -15,5 +15,5 @@
     height: 100%;
     background: @background-gray-color;
     display: flex;
-}    
+}
 </style>

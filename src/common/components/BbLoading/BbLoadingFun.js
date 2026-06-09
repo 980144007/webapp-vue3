@@ -20,7 +20,8 @@ loading.prototype.open = function () {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        zIndex: "888"
+        zIndex: "888",
+        background: "rgba(0, 0, 0, 0.2)"
     }
     for (let key in styles) {
         d.style[key] = styles[key];
@@ -30,8 +31,8 @@ loading.prototype.open = function () {
     document.querySelector("body").appendChild(d);
     document.querySelector("body").style.overflow = "hidden";
 }
-loading.prototype.close = function () {
-    this.num--;
+loading.prototype.close = function (num = 1) {
+    this.num -= num;
     if (this.num < 1) {
         if(this.num <= 0) {
             this.num = 0;
