@@ -50,6 +50,7 @@ export default defineConfig(({mode}) => {
       Components({
         resolvers: [VantResolver()],
         dirs: ['src/common/components'],
+        dts: true,
       }),
       requireTransform({}),
       mkcert(),

@@ -12,7 +12,9 @@
       "apis/*": ["src/apis/*"],
       "directives/*": ["src/directives/*"],
       "mixins/*": ["src/mixins/*"]
-    }
+    },
+    "types": ["vue", "vite/client"]
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*", "components.d.ts"],
+  "exclude": ["node_modules", "dist"]
 }

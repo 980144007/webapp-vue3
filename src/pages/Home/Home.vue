@@ -5,7 +5,7 @@
 
 <template>
     <div class="page-home-container">
-      
+      <BbList />
     </div>
 </template>
 

@@ -28,3 +28,7 @@ system-commandline-sentinel-files/*
 *-lock.*
 
 helper.json
+
+# Auto-generated type declarations
+components.d.ts
+auto-imports.d.ts
