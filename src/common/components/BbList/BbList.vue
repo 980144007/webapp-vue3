@@ -1,13 +1,4 @@
 <script setup name="BbList">
-import {
-  ref,
-  onActivated,
-  onDeactivated,
-  nextTick,
-  onMounted,
-  onBeforeUnmount,
-  toRefs
-} from "vue";
 const props = defineProps({
   useBackTop: {
     type: Boolean,

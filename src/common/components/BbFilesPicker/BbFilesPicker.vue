@@ -1,9 +1,5 @@
 <script setup name="BbFilesPicker">
 import {
-  computed,
-  ref,
-} from "vue";
-import {
   uploadFiles
 } from "apis/common"
 import {

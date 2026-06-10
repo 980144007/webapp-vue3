@@ -30,8 +30,6 @@
   </div>
 </template>
 <script setup name="Bb3DCube">
-import { ref, computed } from "vue";
-
 const props = defineProps({
   text: {
     type: String,

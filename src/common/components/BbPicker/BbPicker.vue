@@ -1,5 +1,4 @@
 <script setup name="BbPicker">
-import { ref, computed, watch } from "vue";
 const showPicker = ref(false);
 const pickerValue = ref([])
 

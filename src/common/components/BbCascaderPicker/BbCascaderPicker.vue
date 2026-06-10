@@ -1,5 +1,4 @@
 <script setup name="BbCascaderPicker">
-import { ref, watch, computed } from "vue";
 const showPicker = ref(false);
 
 const props = defineProps({

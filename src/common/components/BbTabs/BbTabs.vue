@@ -8,12 +8,6 @@
   </div>
 </template>
 <script setup name="BbTabs">
-import {
-  computed,
-  watch,
-  ref,
-  useSlots
-} from 'vue'
 import { useDeviceInfo } from "@/stores";
 const deviceStore = useDeviceInfo();
 const slots = useSlots();

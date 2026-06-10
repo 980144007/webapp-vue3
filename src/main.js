@@ -1,5 +1,4 @@
 import '@vant/touch-emulator';
-import { createApp } from 'vue'
 import App from './App.vue'
 import router from 'router'
 import piniaPersist from 'pinia-plugin-persistedstate'
@@ -12,7 +11,6 @@ import {
     useFileFetch
 } from "apis";
 import lodash from "lodash";
-import moment from "moment";
 import qs from "qs";
 import directives from "directives"
 import {
@@ -39,7 +37,7 @@ const commonFns = {
   axios,
   lodash,
   cloneDeep: lodash.cloneDeep,
-  moment,
+  dayjs,
   qs,
   decodeUri,
   getUrlParam,

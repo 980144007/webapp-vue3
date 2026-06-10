@@ -1,11 +1,6 @@
 <script setup name="app">
 import vconsole from "vconsole";
 import {
-  ref,
-  watch,
-  onBeforeMount
-} from "vue";
-import {
     useUserInfo
 } from "stores";
 import {

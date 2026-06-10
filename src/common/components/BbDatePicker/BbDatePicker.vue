@@ -1,6 +1,5 @@
 <script setup name="BbDatePicker">
-import { ref, watch, inject } from "vue";
-const $moment = inject("$moment");
+const $dayjs = inject("$dayjs");
 const showPicker = ref(false);
 
 const props = defineProps({
@@ -86,7 +85,7 @@ const formatter = (type, option) => {
     </template>
   </van-field>
   <van-popup v-model:show="showPicker" round position="bottom" teleport="body" close-on-click-overlay>
-    <van-date-picker :modelValue="(modelValue || $moment().format('YYYY-MM-DD')).split('-')" @confirm="onConfirm"
+    <van-date-picker :modelValue="(modelValue || $dayjs().format('YYYY-MM-DD')).split('-')" @confirm="onConfirm"
       @cancel="showPicker = false" :formatter="formatter" />
   </van-popup>
   </div>

@@ -70,6 +70,13 @@ export default defineConfig(({mode}) => {
     plugins: [
       vue(),
       AutoImport({
+        imports: [
+          'vue',
+          {
+            dayjs: [['default', 'dayjs']],
+          },
+        ],
+        dts: true,
         resolvers: [VantResolver()],
       }),
       Components({

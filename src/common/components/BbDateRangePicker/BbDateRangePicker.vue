@@ -1,5 +1,5 @@
 <script setup name="BbDateRangePicker">
-import { ref, computed, watch } from "vue";
+const $dayjs = inject("$dayjs");
 const props = defineProps({
   title: {
     type: String,
@@ -46,10 +46,10 @@ watch(showPicker, (n) => {
     endDate: end
   } = value.value;
   if (start) {
-    startDate.value = $moment(start).format("YYYY-MM-DD").split("-");
+    startDate.value = $dayjs(start).format("YYYY-MM-DD").split("-");
   }
   if (end) {
-    endDate.value = $moment(end).format("YYYY-MM-DD").split("-");
+    endDate.value = $dayjs(end).format("YYYY-MM-DD").split("-");
   }
 })
 function onConfirm() {

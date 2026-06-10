@@ -9,7 +9,7 @@
             {{
               textFormatter(
                 modelValue.startDate
-                  ? $moment(modelValue.startDate).format("YYYY/MM/DD")
+                  ? $dayjs(modelValue.startDate).format("YYYY/MM/DD")
                   : ""
               )
             }}
@@ -26,7 +26,7 @@
             {{
               textFormatter(
                 modelValue.endDate
-                  ? $moment(modelValue.endDate).format("YYYY/MM/DD")
+                  ? $dayjs(modelValue.endDate).format("YYYY/MM/DD")
                   : ""
               )
             }}
@@ -45,7 +45,7 @@
             {{
               textFormatter(
                 modelValue.startDate
-                  ? $moment(modelValue.startDate).format("YYYY/MM/DD")
+                  ? $dayjs(modelValue.startDate).format("YYYY/MM/DD")
                   : ""
               )
             }}
@@ -62,7 +62,7 @@
             {{
               textFormatter(
                 modelValue.endDate
-                  ? $moment(modelValue.endDate).format("YYYY/MM/DD")
+                  ? $dayjs(modelValue.endDate).format("YYYY/MM/DD")
                   : ""
               )
             }}
@@ -76,9 +76,9 @@
     <template v-else-if="mode == 3">
       <div class="col" @click="onValueClick()">
         <input class="value-input" type="text" :placeholder="labels[0]" :value="modelValue.startDate || modelValue.endDate ? `${modelValue.startDate
-            ? $moment(modelValue.startDate).format('YYYY/MM/DD')
+            ? $dayjs(modelValue.startDate).format('YYYY/MM/DD')
             : ''}-${modelValue.endDate
-            ? $moment(modelValue.endDate).format('YYYY/MM/DD')
+            ? $dayjs(modelValue.endDate).format('YYYY/MM/DD')
             : ''}` : ''" readonly />
       </div>
     </template>
@@ -86,8 +86,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref, computed, inject } from "vue";
-const $moment = inject("$moment");
+const $dayjs = inject("$dayjs");
 const props = defineProps({
   disabled: {
     type: Boolean,

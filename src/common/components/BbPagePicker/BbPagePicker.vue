@@ -1,8 +1,6 @@
 
 
 <script setup name="BbPagePicker">
-import { ref, computed, onMounted, onBeforeUnmount, watch } from "vue";
-
 const props = defineProps({
     modelValue: {},
     options: {

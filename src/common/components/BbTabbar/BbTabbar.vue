@@ -17,11 +17,6 @@
   </div>
 </template>
 <script setup lang="ts">
-import {
-  computed,
-  ref,
-  useSlots,
-} from 'vue'
 import { useDeviceInfo } from '@/stores'
 
 const slots = useSlots();

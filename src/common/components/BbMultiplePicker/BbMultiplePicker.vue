@@ -1,11 +1,4 @@
 <script setup name="BbMultiplePicker">
-import {
-  ref,
-  computed,
-  watch,
-  toRefs
-} from "vue";
-
 const props = defineProps({
   modelValue: {},
   options: {
