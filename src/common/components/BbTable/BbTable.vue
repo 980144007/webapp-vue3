@@ -76,7 +76,7 @@
     </table>
   </div>
 </template>
-<script setup name="BbTable">
+<script setup lang="ts" name="BbTable">
 import Decimal from "decimal.js";
 const props = defineProps({
   dataList: {

@@ -1,4 +1,4 @@
-<script setup name="BbLoading">
+<script setup lang="ts" name="BbLoading">
 defineProps({
     size: {
         type: String,

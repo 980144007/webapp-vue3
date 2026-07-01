@@ -27,7 +27,7 @@
   </div>
 </template>
 
-<script setup name="Home">
+<script setup lang="ts" name="Home">
 import { useRoute, useRouter } from "vue-router";
 import { useI18n } from 'vue-i18n'
 

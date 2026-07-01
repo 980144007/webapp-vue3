@@ -87,7 +87,7 @@ function useAxios() {
               value, 
               fileName
             } = data;
-            if(value && value.constructor && val.constructor.name === "File") {
+            if(value && value.constructor && value.constructor.name === "File") {
               form.append(name, value, fileName || fileName === 0 ? fileName : value.name);
             } else {
               form.append(name, value);

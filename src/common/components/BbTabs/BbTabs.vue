@@ -7,7 +7,7 @@
     </van-tabs>
   </div>
 </template>
-<script setup name="BbTabs">
+<script setup lang="ts" name="BbTabs">
 import { useDeviceInfo } from "@/stores";
 const deviceStore = useDeviceInfo();
 const slots = useSlots();

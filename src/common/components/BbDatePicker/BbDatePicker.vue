@@ -1,4 +1,4 @@
-<script setup name="BbDatePicker">
+<script setup lang="ts" name="BbDatePicker">
 const $dayjs = inject("$dayjs");
 const showPicker = ref(false);
 

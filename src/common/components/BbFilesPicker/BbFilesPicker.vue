@@ -1,4 +1,4 @@
-<script setup name="BbFilesPicker">
+<script setup lang="ts" name="BbFilesPicker">
 import {
   uploadFiles
 } from "apis/common"

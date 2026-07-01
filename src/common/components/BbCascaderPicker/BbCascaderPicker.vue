@@ -1,4 +1,4 @@
-<script setup name="BbCascaderPicker">
+<script setup lang="ts" name="BbCascaderPicker">
 const showPicker = ref(false);
 
 const props = defineProps({

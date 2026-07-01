@@ -29,7 +29,7 @@
     </div>
   </div>
 </template>
-<script setup name="Bb3DCube">
+<script setup lang="ts" name="Bb3DCube">
 const props = defineProps({
   text: {
     type: String,

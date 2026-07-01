@@ -10,7 +10,7 @@
   </div>
 </template>
 
-<script setup name="Mine">
+<script setup lang="ts" name="Mine">
 
 </script>
 

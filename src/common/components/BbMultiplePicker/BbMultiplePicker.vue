@@ -1,4 +1,4 @@
-<script setup name="BbMultiplePicker">
+<script setup lang="ts" name="BbMultiplePicker">
 const props = defineProps({
   modelValue: {},
   options: {

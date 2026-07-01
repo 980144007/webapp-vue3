@@ -1,4 +1,4 @@
-<script setup name="BbDateRangePicker">
+<script setup lang="ts" name="BbDateRangePicker">
 const $dayjs = inject("$dayjs");
 const props = defineProps({
   title: {

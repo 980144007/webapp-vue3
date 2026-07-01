@@ -1,4 +1,4 @@
-<script setup name="app">
+<script setup lang="ts" name="app">
 import vconsole from "vconsole";
 import {
     useUserInfo

@@ -1,11 +1,17 @@
 import archiver from 'archiver';
-import fs from 'fs';
+import fs from 'node:fs';
+import type { Plugin } from 'vite';
 import { rimraf } from 'rimraf';
+
+interface OutputPluginOptions {
+  outputZipPath?: string;
+  sourceDir?: string;
+}
 
 export default function OutputPlugin({
   outputZipPath = 'dist/output.zip',
   sourceDir = 'dist'
-}) {
+}: OutputPluginOptions = {}): Plugin | undefined {
   
   if(process.env.NODE_ENV !== "production") return;
   return {

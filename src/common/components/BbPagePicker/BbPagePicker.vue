@@ -1,6 +1,6 @@
 
 
-<script setup name="BbPagePicker">
+<script setup lang="ts" name="BbPagePicker">
 const props = defineProps({
     modelValue: {},
     options: {

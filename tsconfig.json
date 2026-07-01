@@ -1,0 +1,36 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "module": "ESNext",
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "skipLibCheck": true,
+    "allowJs": false,
+    "moduleResolution": "Bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "preserve",
+    "strict": false,
+    "ignoreDeprecations": "6.0",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "pages/*": ["src/pages/*"],
+      "components/*": ["src/common/components/*"],
+      "assets/*": ["src/assets/*"],
+      "stores/*": ["src/stores/*"],
+      "router/*": ["src/router/*"],
+      "common/*": ["src/common/*"],
+      "apis/*": ["src/apis/*"],
+      "directives/*": ["src/directives/*"],
+      "mixins/*": ["src/mixins/*"],
+      "i18n/*": ["src/i18n/*"],
+      "langs/*": ["src/i18n/langs/*"]
+    },
+    "types": ["vue", "vite/client"]
+  },
+  "include": ["src/**/*", "components.d.ts", "auto-imports.d.ts", "env.d.ts", "vite.config.ts", "OutputPlugin.ts"],
+  "exclude": ["node_modules", "dist"]
+}

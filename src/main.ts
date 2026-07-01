@@ -1,3 +1,4 @@
+import { createApp } from 'vue'
 import '@vant/touch-emulator';
 import App from './App.vue'
 import router from 'router'
@@ -20,7 +21,7 @@ import {
 import BbLoading from "components/BbLoading"
 import { useLanguage } from 'stores'
 const vm = createApp(App);
-const pinia = createPinia(); 
+const pinia = createPinia();
 pinia.use(piniaPersist);
 vm.use(router).use(pinia).use(i18n);
 
@@ -44,8 +45,8 @@ const commonFns = {
   failToast: showFailToast,
   successToast: showSuccessToast,
   toast: Toast,
-  getFileType: (suffix) => {
-    const types = {
+  getFileType: (suffix?: string) => {
+    const types: Record<string, string[]> = {
       image: ["jpg", "jpeg", "png", "gif", "bmp", "webp"],
     };
     for (let key in types) {
@@ -62,15 +63,16 @@ const commonFns = {
 
 for(const key in commonFns) {
     const name = /^\$/.test(key) ? key : `$${key}`;
-    const fn = commonFns[key];
+    const fn = commonFns[key as keyof typeof commonFns];
     vm.provide(name, fn);
-    window[name] = fn;
+    window[name as keyof Window] = fn as never;
 }
 
 for(let key in directives) {
-    const name = directives[key].name;
+    const directive = directives[key as keyof typeof directives];
+    const name = directive.name;
     if(!name) continue;
-    vm.directive(name, directives[key])
+    vm.directive(name, directive)
 }
 vm.use(BbLoading);
 vm.mount('#app');

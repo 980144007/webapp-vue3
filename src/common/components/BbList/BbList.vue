@@ -1,4 +1,4 @@
-<script setup name="BbList">
+<script setup lang="ts" name="BbList">
 const props = defineProps({
   useBackTop: {
     type: Boolean,

@@ -1,4 +1,4 @@
-<script setup name="BbPicker">
+<script setup lang="ts" name="BbPicker">
 const showPicker = ref(false);
 const pickerValue = ref([])
 

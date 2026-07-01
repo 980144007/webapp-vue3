@@ -1,5 +1,5 @@
 
-import { defineConfig, loadEnv } from 'vite'
+import { defineConfig, loadEnv, type UserConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import Components from 'unplugin-vue-components/vite';
 import { VantResolver } from '@vant/auto-import-resolver';
@@ -8,7 +8,7 @@ import requireTransform from 'vite-plugin-require-transform';
 import mkcert from "vite-plugin-mkcert";
 import legacyPlugin from '@vitejs/plugin-legacy';
 import esbuild from 'rollup-plugin-esbuild';
-import path from 'path';
+import path from 'node:path';
 import OutputPlugin from './OutputPlugin';
 
 const date = new Date();
@@ -26,7 +26,7 @@ export default defineConfig(({mode}) => {
     ...others
   } = loadEnv(mode, process.cwd());
   const outDir = `${outputDir}/${VITE_PROJECT_NAME}`;
-  const proxy = {};
+  const proxy: NonNullable<UserConfig['server']>['proxy'] = {};
   for(let key in others) {
     if(/_URL$/.test(key)) {
       const url = others[key];
@@ -44,7 +44,7 @@ export default defineConfig(({mode}) => {
     }
   }
   return {
-    base: "./",  
+    base: "./",
     assetsPublicPath :'./',
     build: {
       outDir,
@@ -56,7 +56,7 @@ export default defineConfig(({mode}) => {
           sourcemap: false,
           chunkFileNames: 'js/[name]-[hash].js',
           entryFileNames: 'js/[name]-[hash].js',
-          assetFileNames({name}) {
+          assetFileNames({name = ''}) {
             if (/\.(jpg|png|jpeg|gif|svg)$/.test(name)) { // 匹配资源文件后缀
               return `img/[name]-[hash].[ext]`;  // 创建media文件夹存放匹配的资源文件,name为该文件的原名，hash为哈希值，ext为文件后缀名，以[name].[hash][ext]命名规则
             } else if (/\.(css|less|sass|scss)$/.test(name)) {
@@ -65,7 +65,7 @@ export default defineConfig(({mode}) => {
             return 'assets/[name]-[hash].[ext]';
           }
         }
-      } 
+      }
     },
     plugins: [
       vue(),
@@ -94,8 +94,8 @@ export default defineConfig(({mode}) => {
                 '.vue': 'js'
             }
         }),
-        enforce: 'post'
-      },
+        enforce: 'post' as const
+      } as unknown,
       legacyPlugin({
         modernPolyfills: true,
         targets: ['ie >= 11', 'chrome <= 80'], // 需要兼容的目标列表，可以设置多个
