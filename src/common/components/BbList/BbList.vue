@@ -1,4 +1,4 @@
-<script setup lang="ts" name="BbList">
+<script setup name="BbList">
 const props = defineProps({
   useBackTop: {
     type: Boolean,
@@ -11,12 +11,25 @@ const props = defineProps({
   onRefresh: {
     type: Function,
   },
+  refreshing: {
+    default: null,
+  },
+  loadingMore: {
+    default: null,
+  },
+  finished: {
+    default: null,
+  },
   onLoadMore: {
     type: Function,
   },
   errorText: {
     type: String,
     default: "加载失败，点击此处重新加载"
+  },
+  hideNoMore: {
+    type: Boolean,
+    default: false,
   },
   delay: {
     type: [Number, String],
@@ -39,19 +52,59 @@ const {
   errorText,
   delay,
 } = toRefs(props)
+const emit = defineEmits(["update:refreshing", "update:loadingMore", "update:finished"])
 const cmRefresh = ref(null);
 const cmLoadMore = ref(null);
-const refreshing = ref(false);
-const loadingMore = ref(false);
+const innerRefreshing = ref(false);
+const innerLoadingMore = ref(false);
+const innerFinished = ref(false);
 const refreshError = ref(false);
 const loadMoreError = ref(false);
-const finished = ref(false);
 const shouldnotLoad = ref(autoLoad.value ? false : true);
 let observer = null;
 let loadIndex = 0;
 let scrollTop = 0;
 let scrollTimer = null;
 let initTimer = null;
+
+const refreshingValue = computed(() => {
+  if (props.refreshing === null || props.refreshing === undefined) {
+    return innerRefreshing.value
+  }
+
+  return props.refreshing
+})
+
+const loadingMoreValue = computed(() => {
+  if (props.loadingMore === null || props.loadingMore === undefined) {
+    return innerLoadingMore.value
+  }
+
+  return props.loadingMore
+})
+
+const finishedValue = computed(() => {
+  if (props.finished === null || props.finished === undefined) {
+    return innerFinished.value
+  }
+
+  return props.finished
+})
+
+const setRefreshing = (value) => {
+  innerRefreshing.value = value
+  emit("update:refreshing", value)
+}
+
+const setLoadingMore = (value) => {
+  innerLoadingMore.value = value
+  emit("update:loadingMore", value)
+}
+
+const setFinished = (value) => {
+  innerFinished.value = value
+  emit("update:finished", value)
+}
 
 const init = (destroyed = false) => {
   cmRefresh.value?.$el?.removeEventListener("scroll", onScroll);
@@ -83,49 +136,51 @@ const init = (destroyed = false) => {
   }
 }
 
-const myRefresh = () => {
-  if (loadingMore.value || refreshing.value || !onRefresh) return;
+const myRefresh = (force = false) => {
+  const shouldForceRefresh = force === true
+  if (!shouldForceRefresh && (loadingMoreValue.value || refreshingValue.value)) return;
+  if (!onRefresh) return;
   const nLoadIndex = ++loadIndex;
   // console.log("刷新");
   shouldnotLoad.value = false;
-  refreshing.value = true;
+  setRefreshing(true);
   refreshError.value = false;
-  finished.value = false;
+  setFinished(false);
   loadMoreError.value = false;
   cmRefresh.value.$el.scrollTop = 0;
   onRefresh()
     .then((onMore = false) => {
       if (nLoadIndex === loadIndex) {
-        refreshing.value = false;
-        finished.value = onMore;
+        setRefreshing(false);
+        setFinished(onMore);
         check(true);
       }
     })
     .catch(() => {
       if (nLoadIndex === loadIndex) {
-        refreshing.value = false;
+        setRefreshing(false);
         refreshError.value = true;
-        finished.value = false;
+        setFinished(false);
       }
     });
 }
 
 const myLoadMore = () => {
-  if (loadingMore.value || refreshing.value || !onLoadMore) return;
+  if (loadingMoreValue.value || refreshingValue.value || !onLoadMore) return;
   const nLoadIndex = ++loadIndex;
-  loadingMore.value = true;
+  setLoadingMore(true);
   shouldnotLoad.value = false;
   refreshError.value = false;
   loadMoreError.value = false;
   onLoadMore()
     .then((onMore = false) => {
       if (nLoadIndex === loadIndex) {
-        loadingMore.value = false;
-        finished.value = onMore;
+        setLoadingMore(false);
+        setFinished(onMore);
       }
     })
     .catch(() => {
-      loadingMore.value = false;
+      setLoadingMore(false);
       loadMoreError.value = true;
     });
 }
@@ -136,9 +191,9 @@ const check = (isSingle = false) => {
 }
 
 const refresh = () => {
-  refreshing.value = false;
-  loadingMore.value = false;
-  myRefresh();
+  setRefreshing(false);
+  setLoadingMore(false);
+  myRefresh(true);
 }
 
 const onScroll = (e) => {
@@ -172,16 +227,16 @@ defineExpose({
 
 
 <template>
-  <van-pull-refresh ref="cmRefresh" class="list" :modelValue="refreshing" :success-duration="800" :pull-distance="80"
-    @refresh="myRefresh" :disabled="loadingMore.value || !onRefresh">
+  <van-pull-refresh ref="cmRefresh" class="list" :modelValue="refreshingValue" :success-duration="800" :pull-distance="80"
+    @refresh="myRefresh" :disabled="loadingMoreValue || refreshingValue || !onRefresh">
     <template #loading>
-      <BbLoadingIcon size="50px" />
+      <BbLoadingIcon size="14px">●●●</BbLoadingIcon>
     </template>
-    <van-list ref="cmLoadMore" :disabled="refreshing || shouldnotLoad || !onLoadMore" :loading="loadingMore"
-      :finished="finished" :error-text="errorText" :error="loadMoreError || refreshError" finished-text="没有更多了"
+    <van-list ref="cmLoadMore" :disabled="refreshingValue || shouldnotLoad || !onLoadMore" :loading="loadingMoreValue"
+      :finished="finishedValue" :error-text="errorText" :error="loadMoreError || refreshError" :finished-text="hideNoMore ? '' : '没有更多了' "
       @load="myLoadMore">
       <template #loading>
-        <BbLoadingIcon size="50px" />
+        <BbLoadingIcon size="14px">●●●</BbLoadingIcon>
       </template>
       <div class="bb-list-content" ref="content-box">
         <van-back-top v-if="useBackTop" offset="50" right="10vw" bottom="20vh" />
@@ -210,5 +265,9 @@ defineExpose({
   height: 100%;
   flex-grow: 1;
   overflow-y: auto;
+  :deep(.van-pull-refresh__head) {
+    display: flex;
+    justify-content: center;
+  }
 }
 </style>

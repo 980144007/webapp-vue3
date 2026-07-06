@@ -1,9 +1,17 @@
-<script setup lang="ts" name="BbPicker">
-const showPicker = ref(false);
+<script setup name="BbPicker">
+const innerShowPicker = ref(false);
 const pickerValue = ref([])
 
 const props = defineProps({
   modelValue: {},
+  show: {
+    type: Boolean,
+    default: undefined
+  },
+  showField: {
+    type: Boolean,
+    default: true
+  },
   options: {
     type: Array,
     default: () => []
@@ -46,6 +54,10 @@ const props = defineProps({
     type: String,
     default: ""
   },
+  title: {
+    type: String,
+    default: undefined
+  },
   required: {
     type: Boolean,
     default: false
@@ -71,7 +83,19 @@ const props = defineProps({
     default: "normal"
   }
 })
-const emits = defineEmits(["onVisible", "update:modelValue", "confirm"]);
+const emits = defineEmits(["onVisible", "update:modelValue", "update:show", "confirm", "cancel", "closed"]);
+const isShowControlled = computed(() => typeof props.show === "boolean");
+const showPicker = computed({
+  get() {
+    return isShowControlled.value ? props.show : innerShowPicker.value;
+  },
+  set(value) {
+    if (!isShowControlled.value) {
+      innerShowPicker.value = value;
+    }
+    emits("update:show", value);
+  }
+});
 const selectedObj = computed(() => {
   const val = props.modelValue;
   return optionList.value.find(({ value }) => val === value) || {};
@@ -100,10 +124,17 @@ watch(showPicker, (n) => {
 })
 const onConfirm = ({ selectedOptions }) => {
   const multiple = props.multiple;
-  const result = !multiple ? selectedOptions[0] : selectedOptions;
-  emits("update:modelValue", !multiple ? result.value : result.map(({ value }) => value));
-  emits("confirm", !multiple ? result[0] : result);
-  onShowChange();
+  const nOptions = selectedOptions.map((item) => {
+    return {
+      ...item,
+      [props.valueKey]: item.value,
+      [props.labelKey]: item.text,
+    }
+  });
+  const result = !multiple ? nOptions[0] : nOptions;
+  emits("update:modelValue", !multiple ? result?.value : result.map(({ value }) => value));
+  emits("confirm", result);
+  setPickerVisible(false);
 }
 
 
@@ -112,20 +143,34 @@ function clear() {
   emits("confirm");
 }
 
-const onShowChange = () => {
+function onCancel() {
+  setPickerVisible(false);
+  emits("cancel");
+}
+
+function setPickerVisible(show) {
+  showPicker.value = show;
+}
+
+const onShowChange = (show) => {
   if (props.readonly || props.disabled) return;
-  if (optionList.length === 0) {
+  if (optionList.value.length === 0) {
     $failToast("无选项");
     return;
   }
-  showPicker.value = !showPicker.value;
+  setPickerVisible(typeof show === "boolean" ? show : !showPicker.value);
 }
+
+defineExpose({
+  open: () => onShowChange(true),
+  close: () => setPickerVisible(false),
+});
 
 </script>
 
 <template>
   <div class="bb-picker-container" :class="{ border: border }">
-    <van-field :size="size" v-if="type === 'input'" :modelValue="selectedObj.text || ''" :name="name" :label="label"
+    <van-field :size="size" v-if="showField && type === 'input'" :modelValue="selectedObj.text || ''" :name="name" :label="label"
       :required="required" readonly :is-link="!disabled && !props.readonly" :disabled="disabled"
       :rules="rules[0] ? rules : [{ required, message: `请选择${label}` }]"
       :placeholder="(disabled || props.readonly) && !holdPlaceholder ? '' : placeholder || `请选择${label}`"
@@ -137,7 +182,7 @@ const onShowChange = () => {
         <van-icon :color="iconColor" name="clear" @click.stop="clear" />
       </template>
     </van-field>
-    <div v-else class="input-box" @click.stop="onShowChange">
+    <div v-else-if="showField" class="input-box" @click.stop="onShowChange">
       <slot>
         <div :class="['value-box', !disabled ? 'disabled' : '']">
           <input :name="name" :rules="rules" :class="{ value: true, border }" :placeholder="placeholder" readonly
@@ -150,8 +195,8 @@ const onShowChange = () => {
         </div>
       </slot>
     </div>
-    <van-popup v-model:show="showPicker" round position="bottom" teleport="body">
-      <van-picker v-model="pickerValue" :columns="optionList" @cancel="showPicker = false" @confirm="onConfirm" />
+    <van-popup v-model:show="showPicker" round position="bottom" teleport="body" close-on-click-overlay @closed="emits('closed')">
+      <van-picker v-model="pickerValue" :title="title" :columns="optionList" @cancel="onCancel" @confirm="onConfirm" />
     </van-popup>
   </div>
 

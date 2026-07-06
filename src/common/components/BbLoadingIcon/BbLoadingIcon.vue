@@ -1,129 +1,44 @@
-<script setup lang="ts" name="BbLoading">
-defineProps({
-    size: {
-        type: String,
-        default: "50px"
-    }
-})
+<script setup name="BbLoadingIcon">
+const props = defineProps({
+  size: {
+    type: String,
+    default: "28px",
+  },
+  text: {
+    default: "",
+  },
+  type: {
+    type: String,
+    default: "1",
+  },
+});
+const usedText = computed(() => props.text || (props.type === "1" ? "Homa" : "●●●"))
 </script>
 
 <template>
-    <svg
-        :style="`width: ${size}`"
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 100 100"
-        preserveAspectRatio="xMidYMid"
-        class="lds-ellipsis"
-    >
-        <circle cx="84" cy="50" r="0" fill="#f3b72e">
-            <animate
-                attributeName="r"
-                values="10;0;0;0;0"
-                keyTimes="0;0.25;0.5;0.75;1"
-                keySplines="0 0.5 0.5 1;0 0.5 0.5 1;0 0.5 0.5 1;0 0.5 0.5 1"
-                calcMode="spline"
-                dur="1.7s"
-                repeatCount="indefinite"
-                begin="0s"
-            ></animate>
-            <animate
-                attributeName="cx"
-                values="84;84;84;84;84"
-                keyTimes="0;0.25;0.5;0.75;1"
-                keySplines="0 0.5 0.5 1;0 0.5 0.5 1;0 0.5 0.5 1;0 0.5 0.5 1"
-                calcMode="spline"
-                dur="1.7s"
-                repeatCount="indefinite"
-                begin="0s"
-            ></animate>
-        </circle>
-        <circle cx="84" cy="50" r="0.0170326" fill="#E8574E">
-            <animate
-                attributeName="r"
-                values="0;10;10;10;0"
-                keyTimes="0;0.25;0.5;0.75;1"
-                keySplines="0 0.5 0.5 1;0 0.5 0.5 1;0 0.5 0.5 1;0 0.5 0.5 1"
-                calcMode="spline"
-                dur="1.7s"
-                repeatCount="indefinite"
-                begin="-0.85s"
-            ></animate>
-            <animate
-                attributeName="cx"
-                values="16;16;50;84;84"
-                keyTimes="0;0.25;0.5;0.75;1"
-                keySplines="0 0.5 0.5 1;0 0.5 0.5 1;0 0.5 0.5 1;0 0.5 0.5 1"
-                calcMode="spline"
-                dur="1.7s"
-                repeatCount="indefinite"
-                begin="-0.85s"
-            ></animate>
-        </circle>
-        <circle cx="83.9421" cy="50" r="10" fill="#43A976">
-            <animate
-                attributeName="r"
-                values="0;10;10;10;0"
-                keyTimes="0;0.25;0.5;0.75;1"
-                keySplines="0 0.5 0.5 1;0 0.5 0.5 1;0 0.5 0.5 1;0 0.5 0.5 1"
-                calcMode="spline"
-                dur="1.7s"
-                repeatCount="indefinite"
-                begin="-0.425s"
-            ></animate>
-            <animate
-                attributeName="cx"
-                values="16;16;50;84;84"
-                keyTimes="0;0.25;0.5;0.75;1"
-                keySplines="0 0.5 0.5 1;0 0.5 0.5 1;0 0.5 0.5 1;0 0.5 0.5 1"
-                calcMode="spline"
-                dur="1.7s"
-                repeatCount="indefinite"
-                begin="-0.425s"
-            ></animate>
-        </circle>
-        <circle cx="49.9421" cy="50" r="10" fill="#304153">
-            <animate
-                attributeName="r"
-                values="0;10;10;10;0"
-                keyTimes="0;0.25;0.5;0.75;1"
-                keySplines="0 0.5 0.5 1;0 0.5 0.5 1;0 0.5 0.5 1;0 0.5 0.5 1"
-                calcMode="spline"
-                dur="1.7s"
-                repeatCount="indefinite"
-                begin="0s"
-            ></animate>
-            <animate
-                attributeName="cx"
-                values="16;16;50;84;84"
-                keyTimes="0;0.25;0.5;0.75;1"
-                keySplines="0 0.5 0.5 1;0 0.5 0.5 1;0 0.5 0.5 1;0 0.5 0.5 1"
-                calcMode="spline"
-                dur="1.7s"
-                repeatCount="indefinite"
-                begin="0s"
-            ></animate>
-        </circle>
-        <circle cx="16" cy="50" r="9.98297" fill="#f3b72e">
-            <animate
-                attributeName="r"
-                values="0;0;10;10;10"
-                keyTimes="0;0.25;0.5;0.75;1"
-                keySplines="0 0.5 0.5 1;0 0.5 0.5 1;0 0.5 0.5 1;0 0.5 0.5 1"
-                calcMode="spline"
-                dur="1.7s"
-                repeatCount="indefinite"
-                begin="0s"
-            ></animate>
-            <animate
-                attributeName="cx"
-                values="16;16;16;50;84"
-                keyTimes="0;0.25;0.5;0.75;1"
-                keySplines="0 0.5 0.5 1;0 0.5 0.5 1;0 0.5 0.5 1;0 0.5 0.5 1"
-                calcMode="spline"
-                dur="1.7s"
-                repeatCount="indefinite"
-                begin="0s"
-            ></animate>
-        </circle>
-    </svg>
+  <div class="bb-loading-icon" :style="{ 'font-size': size }">
+    <slot>{{ usedText }}</slot>
+  </div>
 </template>
+
+<style scoped lang="less">
+.bb-loading-icon {
+  width: fit-content;
+  font-family: system-ui, sans-serif;
+  font-weight: bold;
+  // text-transform: uppercase;
+  color: #0000;
+  -webkit-text-stroke: 1px #E96736;
+  background: conic-gradient(#E96736 0 0) 0/0% 100% no-repeat;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  animation: l1 1.5s linear infinite;
+
+  @keyframes l1 {
+    to {
+      background-size: 120% 100%;
+    }
+  }
+}
+</style>
