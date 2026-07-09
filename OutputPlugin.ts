@@ -3,8 +3,8 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import readline from 'node:readline';
-import { spawn } from 'node:child_process';
-import type { OutputAsset, OutputChunk, Plugin } from 'vite';
+import { execFileSync, spawn } from 'node:child_process';
+import type { Plugin } from 'vite';
 
 const spinnerChars = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'];
 let spinnerIndex = 0;
@@ -12,8 +12,6 @@ let spinnerInterval: NodeJS.Timeout | null = null;
 let loadingText = '';
 let loadingLineLength = 0;
 let loadingStartedAt = 0;
-
-type BundleItem = OutputAsset | OutputChunk;
 
 interface OutputPluginOptions {
   outputZipPath?: string;
@@ -62,6 +60,23 @@ function stopLoading(text?: string) {
   if (text) {
     console.log(text);
   }
+}
+
+function hideDirectory(dir: string) {
+  if (process.platform !== 'win32') return;
+
+  try {
+    execFileSync('attrib', ['+h', dir], { stdio: 'ignore' });
+  } catch {}
+}
+
+function removeDirectory(dir: string) {
+  if (process.platform === 'win32' && fs.existsSync(dir)) {
+    try {
+      execFileSync('attrib', ['-h', dir], { stdio: 'ignore' });
+    } catch {}
+  }
+  fs.rmSync(dir, { recursive: true, force: true });
 }
 
 function selectZipWithExplorer(absPath: string) {
@@ -157,19 +172,51 @@ function askOpenZip(outputZipPath: string) {
   });
 }
 
+function zipDirectory(sourceDir: string, zipRoot: string, outputZipPath: string) {
+  return new Promise<void>((resolve, reject) => {
+    const output = fs.createWriteStream(outputZipPath);
+    const archive = archiver('zip', {
+      zlib: { level: 9 }
+    });
+
+    output.on('close', resolve);
+    output.on('error', reject);
+    archive.on('error', reject);
+
+    archive.on('progress', (progress) => {
+      const total = progress.entries.total || 1;
+      const percent = Math.round((progress.entries.processed / total) * 100);
+      updateLoading(`正在生成压缩包... ${percent}%`);
+    });
+
+    archive.pipe(output);
+    archive.directory(sourceDir, zipRoot);
+    archive.finalize();
+  });
+}
+
 export default function OutputPlugin({
   outputZipPath = 'dist/output.zip',
   rootDir = ''
 }: OutputPluginOptions = {}): Plugin | undefined {
   if(process.env.NODE_ENV !== "production") return;
 
-  const files = new Map<string, string | Uint8Array>();
-  const zipRoot = rootDir ? rootDir.replace(/\\/g, '/').replace(/\/+$/, '') : '';
+  let outDir = '';
+  let tempRootDir = '';
   let transformCount = 0;
+  const zipRoot = rootDir ? rootDir.replace(/\\/g, '/').replace(/\/+$/, '') : '';
 
   return {
     name: 'output-plugin',
+    configResolved(config) {
+      outDir = config.build.outDir;
+      tempRootDir = path.dirname(outDir);
+    },
     buildStart() {
+      transformCount = 0;
+      removeDirectory(tempRootDir);
+      fs.mkdirSync(tempRootDir, { recursive: true });
+      hideDirectory(tempRootDir);
       startLoading('正在构建项目...');
     },
     transform() {
@@ -187,41 +234,17 @@ export default function OutputPlugin({
     renderStart() {
       updateLoading('正在生成构建产物...');
     },
-    generateBundle(_, bundle) {
-      updateLoading('正在收集构建产物...');
-      for (const item of Object.values(bundle) as BundleItem[]) {
-        files.set(item.fileName, item.type === 'chunk' ? item.code : item.source);
-      }
-    },
     async closeBundle() {
+      if (!fs.existsSync(outDir)) return;
+
       updateLoading('正在生成压缩包...');
       fs.mkdirSync(path.dirname(outputZipPath), { recursive: true });
 
-      await new Promise<void>((resolve, reject) => {
-        const output = fs.createWriteStream(outputZipPath);
-        const archive = archiver('zip', {
-          zlib: { level: 9 }
-        });
-
-        output.on('close', resolve);
-        output.on('error', reject);
-        archive.on('error', reject);
-
-        archive.on('progress', (progress) => {
-          const total = progress.entries.total || 1;
-          const percent = Math.round((progress.entries.processed / total) * 100);
-          updateLoading(`正在生成压缩包... ${percent}%`);
-        });
-
-        archive.pipe(output);
-
-        for (const [fileName, source] of files) {
-          const zipFileName = zipRoot ? `${zipRoot}/${fileName}` : fileName;
-          archive.append(source, { name: zipFileName });
-        }
-
-        archive.finalize();
-      });
+      try {
+        await zipDirectory(outDir, zipRoot, outputZipPath);
+      } finally {
+        removeDirectory(tempRootDir);
+      }
 
       stopLoading(`✓ 压缩包创建完成: ${path.resolve(outputZipPath)}`);
       await askOpenZip(outputZipPath);

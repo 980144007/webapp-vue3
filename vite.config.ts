@@ -16,6 +16,7 @@ const year = date.getFullYear();
 const month = date.getMonth() + 1;
 const day = date.getDate();
 const outputDir = `dist/${year}-${month}-${day}`;
+const tempOutputDir = `dist/.build-temp-${year}-${month}-${day}`;
 
 const https = false;
 
@@ -25,7 +26,7 @@ export default defineConfig(({mode}) => {
     VITE_PROJECT_DESC,
     ...others
   } = loadEnv(mode, process.cwd());
-  const outDir = `${outputDir}/${VITE_PROJECT_NAME}`;
+  const outDir = `${tempOutputDir}/${VITE_PROJECT_NAME}`;
   const proxy: NonNullable<UserConfig['server']>['proxy'] = {};
   for(let key in others) {
     if(/_URL$/.test(key)) {
@@ -48,7 +49,6 @@ export default defineConfig(({mode}) => {
     assetsPublicPath :'./',
     build: {
       outDir,
-      write: false,
       rollupOptions: {
         input: {
           index: path.resolve(__dirname, `index.html`)
