@@ -9,6 +9,8 @@ import type { OutputAsset, OutputChunk, Plugin } from 'vite';
 const spinnerChars = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'];
 let spinnerIndex = 0;
 let spinnerInterval: NodeJS.Timeout | null = null;
+let loadingText = '';
+let loadingLineLength = 0;
 
 type BundleItem = OutputAsset | OutputChunk;
 
@@ -17,13 +19,32 @@ interface OutputPluginOptions {
   rootDir?: string;
 }
 
+function writeLoadingLine(text: string) {
+  const line = `${spinnerChars[spinnerIndex]} ${text}`;
+  const padding = Math.max(0, loadingLineLength - line.length);
+  process.stdout.write(`\r${line}${' '.repeat(padding)}`);
+  loadingLineLength = line.length;
+}
+
 function startLoading(text: string) {
+  loadingText = text;
   spinnerIndex = 0;
   process.stdout.write('\x1B[?25l');
+  writeLoadingLine(loadingText);
+  if (spinnerInterval) return;
   spinnerInterval = setInterval(() => {
-    process.stdout.write(`\r${spinnerChars[spinnerIndex]} ${text}`);
     spinnerIndex = (spinnerIndex + 1) % spinnerChars.length;
+    writeLoadingLine(loadingText);
   }, 80);
+}
+
+function updateLoading(text: string) {
+  loadingText = text;
+  if (!spinnerInterval) {
+    startLoading(text);
+    return;
+  }
+  writeLoadingLine(loadingText);
 }
 
 function stopLoading(text?: string) {
@@ -31,8 +52,9 @@ function stopLoading(text?: string) {
     clearInterval(spinnerInterval);
     spinnerInterval = null;
   }
-  process.stdout.write('\r' + ' '.repeat(20) + '\r');
+  process.stdout.write('\r' + ' '.repeat(loadingLineLength) + '\r');
   process.stdout.write('\x1B[?25h');
+  loadingLineLength = 0;
   if (text) {
     console.log(text);
   }
@@ -139,16 +161,36 @@ export default function OutputPlugin({
 
   const files = new Map<string, string | Uint8Array>();
   const zipRoot = rootDir ? rootDir.replace(/\\/g, '/').replace(/\/+$/, '') : '';
+  let transformCount = 0;
 
   return {
     name: 'output-plugin',
+    buildStart() {
+      startLoading('正在构建项目...');
+    },
+    transform() {
+      transformCount += 1;
+      if (transformCount % 20 === 0) {
+        updateLoading(`正在构建项目... 已处理 ${transformCount} 个模块`);
+      }
+      return null;
+    },
+    buildEnd(error) {
+      if (error) {
+        stopLoading('✗ 构建失败');
+      }
+    },
+    renderStart() {
+      updateLoading('正在生成构建产物...');
+    },
     generateBundle(_, bundle) {
+      updateLoading('正在收集构建产物...');
       for (const item of Object.values(bundle) as BundleItem[]) {
         files.set(item.fileName, item.type === 'chunk' ? item.code : item.source);
       }
     },
     async closeBundle() {
-      startLoading('正在生成压缩包...');
+      updateLoading('正在生成压缩包...');
       fs.mkdirSync(path.dirname(outputZipPath), { recursive: true });
 
       await new Promise<void>((resolve, reject) => {
@@ -164,7 +206,7 @@ export default function OutputPlugin({
         archive.on('progress', (progress) => {
           const total = progress.entries.total || 1;
           const percent = Math.round((progress.entries.processed / total) * 100);
-          process.stdout.write(`\r${spinnerChars[spinnerIndex]} 正在生成压缩包... ${percent}%`);
+          updateLoading(`正在生成压缩包... ${percent}%`);
         });
 
         archive.pipe(output);
