@@ -20,12 +20,13 @@ const tempOutputDir = `dist/.build-temp-${year}-${month}-${day}`;
 
 const https = false;
 
-export default defineConfig(({mode}) => {
+export default defineConfig(({mode, command}) => {
   const {
     VITE_PROJECT_NAME,
     VITE_PROJECT_DESC,
     ...others
   } = loadEnv(mode, process.cwd());
+  const isBuild = command === 'build';
   const outDir = `${tempOutputDir}/${VITE_PROJECT_NAME}`;
   const proxy: NonNullable<UserConfig['server']>['proxy'] = {};
   for(let key in others) {
@@ -77,16 +78,16 @@ export default defineConfig(({mode}) => {
             dayjs: [['default', 'dayjs']],
           },
         ],
-        dts: true,
+        dts: !isBuild,
         resolvers: [VantResolver()],
       }),
       Components({
         resolvers: [VantResolver()],
         dirs: ['src/common/components'],
-        dts: true,
+        dts: !isBuild,
       }),
       requireTransform({}),
-      mkcert(),
+      !isBuild && mkcert(),
       {
         ...esbuild({
             target: 'chrome70',

@@ -176,7 +176,7 @@ function zipDirectory(sourceDir: string, zipRoot: string, outputZipPath: string)
   return new Promise<void>((resolve, reject) => {
     const output = fs.createWriteStream(outputZipPath);
     const archive = archiver('zip', {
-      zlib: { level: 9 }
+      zlib: { level: 6 }
     });
 
     output.on('close', resolve);
