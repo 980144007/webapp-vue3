@@ -1,4 +1,4 @@
-import archiver from 'archiver';
+import { ZipArchive } from 'archiver';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -175,7 +175,7 @@ function askOpenZip(outputZipPath: string) {
 function zipDirectory(sourceDir: string, zipRoot: string, outputZipPath: string) {
   return new Promise<void>((resolve, reject) => {
     const output = fs.createWriteStream(outputZipPath);
-    const archive = archiver('zip', {
+    const archive = new ZipArchive({
       zlib: { level: 6 }
     });
 
