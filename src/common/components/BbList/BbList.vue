@@ -1,4 +1,4 @@
-<script setup name="BbList">
+<script setup lang="ts" name="BbList">
 const props = defineProps({
   useBackTop: {
     type: Boolean,
@@ -34,12 +34,13 @@ const props = defineProps({
   delay: {
     type: [Number, String],
     default: 200,
-    validator(str) {
-      if (isNaN(str)) {
+    validator(str: unknown) {
+      const delay = Number(str);
+      if (Number.isNaN(delay)) {
         console.warn("延迟时间为>=0的数字");
         return false;
       }
-      return str >= 0;
+      return delay >= 0;
     }
   }
 })

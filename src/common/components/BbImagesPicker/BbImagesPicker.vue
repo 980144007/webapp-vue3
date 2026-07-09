@@ -50,7 +50,29 @@
     />
   </div>
 </template>
-<script setup>
+<script setup lang="ts">
+import { showImagePreview } from "vant";
+import type { PropType } from "vue";
+
+interface ImageModelItem {
+  url: string;
+  [key: string]: any;
+}
+
+interface ImagePickerItem {
+  url: string;
+  originalUrl?: string;
+  isImage?: boolean;
+  status?: "uploading" | "success" | "failed";
+  file?: File;
+  content?: string | ArrayBuffer | null;
+}
+
+interface UploadFileItem {
+  file: File;
+  url: string;
+}
+
 const { VITE_API_FILE_URL } = import.meta.env;
 const attrs = useAttrs();
 const props = defineProps({
@@ -59,7 +81,7 @@ const props = defineProps({
     default: 3,
   },
   modelValue: {
-    type: Array,
+    type: Array as PropType<Array<string | ImageModelItem>>,
     default: () => [],
   },
   multiple: {
@@ -75,7 +97,7 @@ const props = defineProps({
     default: false,
   },
   params: {
-    type: Object,
+    type: Object as PropType<Record<string, any>>,
     default: () => ({}),
   },
   responseUrlKey: {
@@ -93,10 +115,10 @@ const props = defineProps({
 });
 
 const emit = defineEmits(["update:modelValue", "cancel"]);
-const fileInputRef = ref(null);
-const fileList = ref(getFileList());
-function getFileList() {
-  return $cloneDeep(props.multiple ? props.modelValue : [props.modelValue]).reduce((list, item) => {
+const fileInputRef = ref<HTMLInputElement | null>(null);
+const fileList = ref<ImagePickerItem[]>(getFileList());
+function getFileList(): ImagePickerItem[] {
+  return $cloneDeep(props.multiple ? props.modelValue : [props.modelValue]).reduce<ImagePickerItem[]>((list, item) => {
     if (!item) return list;
     list.push(
       typeof item === "string"
@@ -144,7 +166,7 @@ const onFileChange = (e) => {
     emit("cancel");
     return;
   }
-  e.target.value = "";
+  target.value = "";
 
   const files = rawFiles.map((file) => ({
     file,
@@ -165,7 +187,7 @@ const onFileChange = (e) => {
   }
 };
 
-const previewImage = (item) => {
+const previewImage = (item: ImagePickerItem) => {
   if (item.status === 'uploading' || item.status === 'failed') return;
   showImagePreview({
     images: fileList.value
@@ -175,7 +197,7 @@ const previewImage = (item) => {
   });
 };
 
-const handleDelete = (item, index) => {
+const handleDelete = (item: ImagePickerItem, index: number) => {
   if (item.status === "uploading" || item.status === "failed") {
     $toast("请等待图片上传完成");
     return;
@@ -297,4 +319,5 @@ function uploadImage(file) {
     background-color: #f7f8fa;
   }
 }
+</style>
 </style>

@@ -1,30 +1,43 @@
+import type { App } from "vue";
 import { createVNode, render } from "vue";
 import BbDialog from "./BbDialog.vue";
 
-function pickCallback(options, name) {
+type DialogOptions = Record<string, any> | string;
+type DialogCallback = (...args: any[]) => void;
+
+interface BbDialogCancelError extends Error {
+  type: "cancel";
+  canceled: true;
+}
+
+interface BbDialogPromise<T = any> extends Promise<T> {
+  close: () => void;
+}
+
+function pickCallback(options: Record<string, any>, name: string): DialogCallback | undefined {
   const callback = options[name];
   delete options[name];
   return typeof callback === "function" ? callback : undefined;
 }
 
-function resolveOptions(options = {}) {
+function resolveOptions(options: DialogOptions = {}): Record<string, any> {
   if (typeof options === "string") {
     return { message: options };
   }
   return { ...options };
 }
 
-function createCancelError() {
-  const error = new Error("BbDialog canceled");
+function createCancelError(): BbDialogCancelError {
+  const error = new Error("BbDialog canceled") as BbDialogCancelError;
   error.name = "BbDialogCancel";
   error.type = "cancel";
   error.canceled = true;
   return error;
 }
 
-export function showBbDialog(options = {}) {
+export function showBbDialog<T = any>(options: DialogOptions = {}): BbDialogPromise<T> {
   if (typeof document === "undefined") {
-    return Promise.reject(createCancelError());
+    return Promise.reject(createCancelError()) as BbDialogPromise<T>;
   }
 
   const dialogProps = resolveOptions(options);
@@ -40,9 +53,10 @@ export function showBbDialog(options = {}) {
 
   let settled = false;
   let cleaned = false;
-  let cleanupTimer;
-  let resolvePromise;
-  let rejectPromise;
+  let cleanupTimer: number | undefined;
+  let resolvePromise!: (value: T) => void;
+  let rejectPromise!: (reason?: unknown) => void;
+  let visible = false;
 
   function cleanup() {
     if (cleaned) return;
@@ -57,21 +71,22 @@ export function showBbDialog(options = {}) {
     cleanupTimer = window.setTimeout(cleanup, 400);
   }
 
-  function renderDialog(show) {
+  function renderDialog(show: boolean) {
+    visible = show;
     const vnode = createVNode(BbDialog, {
       ...dialogProps,
       show,
-      "onUpdate:show": (nextVisible) => {
+      "onUpdate:show": (nextVisible: boolean) => {
         onUpdateShow?.(nextVisible);
         if (!nextVisible && !settled) {
-          finish(undefined, false);
+          finish(undefined as T, false);
         }
       },
       onConfirm: () => {
-        finish("confirm", true);
+        finish("confirm" as T, true);
       },
       onCancel: () => {
-        finish(undefined, false);
+        finish(undefined as T, false);
       },
       onClosed: cleanup,
     });
@@ -88,9 +103,7 @@ export function showBbDialog(options = {}) {
     scheduleCleanupFallback();
   }
 
-  let visible = false;
-
-  function finish(value, confirmed) {
+  function finish(value: T, confirmed: boolean) {
     if (settled) return;
     settled = true;
 
@@ -106,13 +119,13 @@ export function showBbDialog(options = {}) {
     closeDialog();
   }
 
-  const promise = new Promise((resolve, reject) => {
+  const promise = new Promise<T>((resolve, reject) => {
     resolvePromise = resolve;
     rejectPromise = reject;
-  });
+  }) as BbDialogPromise<T>;
 
   promise.catch(() => {});
-  promise.close = () => finish(undefined, false);
+  promise.close = () => finish(undefined as T, false);
   renderDialog(false);
 
   const openDialog =
@@ -129,12 +142,12 @@ export function showBbDialog(options = {}) {
   return promise;
 }
 
-function install(Vue) {
-  if (!Vue) return;
-  Vue.component("BbDialog", BbDialog);
+function install(app: App) {
+  if (!app) return;
+  app.component("BbDialog", BbDialog);
 
-  if (Vue.config?.globalProperties) {
-    Vue.config.globalProperties.$bbDialog = showBbDialog;
+  if (app.config?.globalProperties) {
+    app.config.globalProperties.$bbDialog = showBbDialog;
   }
 }
 

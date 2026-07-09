@@ -1,5 +1,8 @@
-<script setup name="BbDialog">
+<script setup lang="ts" name="BbDialog">
 import { ref, computed, watch } from "vue";
+
+type DialogType = "info" | "warning" | "error" | "success";
+type DialogAction = "confirm" | "cancel";
 
 const innerShow = ref(false);
 
@@ -78,7 +81,7 @@ const showDialog = computed({
   },
 });
 
-const currentTypeConfig = computed(() => typeConfig[props.type] || typeConfig.info);
+const currentTypeConfig = computed(() => typeConfig[props.type as DialogType] || typeConfig.info);
 const currentTitleIcon = computed(() => props.titleIcon || currentTypeConfig.value.icon);
 const currentConfirmButtonIcon = computed(() => props.confirmButtonIcon || currentTypeConfig.value.confirmIcon);
 

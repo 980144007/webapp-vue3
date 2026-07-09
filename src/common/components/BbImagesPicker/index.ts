@@ -1,16 +1,25 @@
+import type { App } from "vue";
 import { createVNode, render } from "vue";
 import BbImagesPicker from "./BbImagesPicker.vue";
 
-function createCancelError() {
-  const error = new Error("BbImagesPicker canceled");
+interface BbImagesPickerCancelError extends Error {
+  type: "cancel";
+  canceled: true;
+}
+
+type BbImagesPickerOptions = Record<string, any>;
+
+type BbImagesPickerPromise = Promise<string[]>;
+
+function createCancelError(): BbImagesPickerCancelError {
+  const error = new Error("BbImagesPicker canceled") as BbImagesPickerCancelError;
   error.name = "BbImagesPickerCancel";
   error.type = "cancel";
   error.canceled = true;
   return error;
 }
 
-// 缓存容器，避免每次调用都重新创建
-let container = null;
+let container: HTMLDivElement | null = null;
 
 function ensureContainer() {
   if (container) return;
@@ -27,43 +36,32 @@ function ensureContainer() {
   document.body.appendChild(container);
 }
 
-/**
- * 通过方法调起文件选择器，选择图片后自动上传，返回上传后的 URL 数组
- * 复用 BbImagesPicker.vue 组件的上传逻辑
- * @param {Object} options
- * @returns {Promise<string[]>} 上传成功后的 URL 数组（upload:false 时返回 base64 数组）
- */
-export function showBbImagesPicker(options = {}) {
+export function showBbImagesPicker(options: BbImagesPickerOptions = {}): BbImagesPickerPromise {
   if (typeof document === "undefined") {
     return Promise.reject(createCancelError());
   }
-
- ;
 
   const cancelError = createCancelError();
 
   ensureContainer();
 
   let settled = false;
-  let resolvePromise;
-  let rejectPromise;
+  let resolvePromise!: (value: string[]) => void;
+  let rejectPromise!: (reason?: unknown) => void;
 
-  const promise = new Promise((resolve, reject) => {
+  const promise = new Promise<string[]>((resolve, reject) => {
     resolvePromise = resolve;
     rejectPromise = reject;
   });
 
-
-
-  // 渲染组件到缓存容器中
   const vnode = createVNode(BbImagesPicker, {
-    "onUpdate:modelValue": (value) => {
+    "onUpdate:modelValue": (value: string[]) => {
       if (settled) return;
       settled = true;
       options.onConfirm?.(value);
       resolvePromise(value);
     },
-    "onCancel": () => {
+    onCancel: () => {
       if (settled) return;
       settled = true;
       options.onCancel?.(cancelError);
@@ -74,22 +72,19 @@ export function showBbImagesPicker(options = {}) {
 
   render(vnode, container);
 
-  // render 是同步的，render 之后 vnode.component.exposed 已就绪，通过组件的 defineExpose 方法触发文件选择
-  const exposed = vnode.component?.exposed;
+  const exposed = vnode.component?.exposed as { triggerUpload?: () => void } | undefined;
   if (exposed?.triggerUpload) {
     exposed.triggerUpload();
   }
 
-
-
   return promise;
 }
 
-function install(Vue) {
-  if (!Vue) return;
-  Vue.component("BbImagesPicker", BbImagesPicker);
-  if (Vue.config?.globalProperties) {
-    Vue.config.globalProperties.$bbImagesPicker = showBbImagesPicker;
+function install(app: App) {
+  if (!app) return;
+  app.component("BbImagesPicker", BbImagesPicker);
+  if (app.config?.globalProperties) {
+    app.config.globalProperties.$bbImagesPicker = showBbImagesPicker;
   }
 }
 

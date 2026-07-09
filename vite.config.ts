@@ -48,6 +48,7 @@ export default defineConfig(({mode}) => {
     assetsPublicPath :'./',
     build: {
       outDir,
+      write: false,
       rollupOptions: {
         input: {
           index: path.resolve(__dirname, `index.html`)
@@ -122,7 +123,7 @@ export default defineConfig(({mode}) => {
       }),
       OutputPlugin({
         outputZipPath: `${outputDir}${VITE_PROJECT_DESC ? `(${VITE_PROJECT_DESC})` : ""}.zip`, // 自定义压缩包路径和名称
-        sourceDir: outputDir // 替换为实际的输出目录
+        rootDir: `${year}-${month}-${day}/${VITE_PROJECT_NAME}`
       })
     ],
     resolve: {

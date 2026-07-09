@@ -1,9 +1,20 @@
-<script setup name="BbPicker">
+<script setup lang="ts" name="BbPicker">
+import type { PropType } from "vue";
+import type { FieldRule } from "vant";
+
+type PickerValue = string | number;
+
+interface PickerOption {
+  text?: string;
+  value?: PickerValue;
+  [key: string]: any;
+}
+
 const innerShowPicker = ref(false);
-const pickerValue = ref([])
+const pickerValue = ref<PickerValue[]>([])
 
 const props = defineProps({
-  modelValue: {},
+  modelValue: {} as PropType<PickerValue | PickerValue[] | undefined>,
   show: {
     type: Boolean,
     default: undefined
@@ -36,11 +47,17 @@ const props = defineProps({
     type: String,
     default: ""
   },
-  placeholder: {},
-  name: {},
+  placeholder: {
+    type: String,
+    default: "",
+  },
+  name: {
+    type: String,
+    default: "",
+  },
   rules: {
-    type: Array,
-    default: () => new Array()
+    type: Array as PropType<FieldRule[]>,
+    default: () => []
   },
   border: {
     type: Boolean,
@@ -96,13 +113,22 @@ const showPicker = computed({
     emits("update:show", value);
   }
 });
-const selectedObj = computed(() => {
+const flatOptionList = computed<PickerOption[]>(() => {
+  return optionList.value.filter((option): option is PickerOption => !Array.isArray(option));
+})
+const selectedObj = computed<PickerOption>(() => {
   const val = props.modelValue;
-  return optionList.value.find(({ value }) => val === value) || {};
+  return flatOptionList.value.find(({ value }) => val === value) || {};
 })
 
-const optionList = computed(() => {
-  return props.options.map(({ [props.labelKey]: label, [props.valueKey]: value, ...other }) => ({ text: label, value, ...other }));
+const optionList = computed<PickerOption[] | PickerOption[][]>(() => {
+  return props.options.map((option: PickerOption | PickerOption[]) => {
+    if (Array.isArray(option)) {
+      return option.map(({ [props.labelKey]: label, [props.valueKey]: value, ...other }) => ({ text: label, value, ...other }));
+    }
+    const { [props.labelKey]: label, [props.valueKey]: value, ...other } = option;
+    return { text: label, value, ...other };
+  });
 })
 
 watch(showPicker, (n) => {
@@ -152,7 +178,7 @@ function setPickerVisible(show) {
   showPicker.value = show;
 }
 
-const onShowChange = (show) => {
+const onShowChange = (show?: boolean | MouseEvent) => {
   if (props.readonly || props.disabled) return;
   if (optionList.value.length === 0) {
     $failToast("无选项");

@@ -1,4 +1,4 @@
-<script setup name="BbLoadingIcon">
+<script setup lang="ts" name="BbLoadingIcon">
 const props = defineProps({
   size: {
     type: String,

@@ -1,13 +1,26 @@
+import type { App } from "vue";
 import { createVNode, render } from "vue";
 import BbPicker from "./BbPicker.vue";
 
-function pickCallback(options, name) {
+type PickerOptions = Record<string, any> | any[] | null;
+type PickerCallback = (...args: any[]) => void;
+
+interface BbPickerCancelError extends Error {
+  type: "cancel";
+  canceled: true;
+}
+
+interface BbPickerPromise<T = any> extends Promise<T> {
+  close: () => void;
+}
+
+function pickCallback(options: Record<string, any>, name: string): PickerCallback | undefined {
   const callback = options[name];
   delete options[name];
   return typeof callback === "function" ? callback : undefined;
 }
 
-function resolveOptions(options = {}) {
+function resolveOptions(options: PickerOptions = {}): Record<string, any> {
   if (Array.isArray(options)) {
     return { options };
   }
@@ -17,17 +30,17 @@ function resolveOptions(options = {}) {
   return { ...options };
 }
 
-function createCancelError() {
-  const error = new Error("BbPicker canceled");
+function createCancelError(): BbPickerCancelError {
+  const error = new Error("BbPicker canceled") as BbPickerCancelError;
   error.name = "BbPickerCancel";
   error.type = "cancel";
   error.canceled = true;
   return error;
 }
 
-export function showBbPicker(options = {}) {
+export function showBbPicker<T = any>(options: PickerOptions = {}): BbPickerPromise<T> {
   if (typeof document === "undefined") {
-    return Promise.reject(createCancelError());
+    return Promise.reject(createCancelError()) as BbPickerPromise<T>;
   }
 
   const pickerProps = resolveOptions(options);
@@ -45,9 +58,9 @@ export function showBbPicker(options = {}) {
   let settled = false;
   let cleaned = false;
   let visible = false;
-  let cleanupTimer;
-  let resolvePromise;
-  let rejectPromise;
+  let cleanupTimer: number | undefined;
+  let resolvePromise!: (value: T) => void;
+  let rejectPromise!: (reason?: unknown) => void;
 
   function cleanup() {
     if (cleaned) return;
@@ -62,23 +75,23 @@ export function showBbPicker(options = {}) {
     cleanupTimer = window.setTimeout(cleanup, 400);
   }
 
-  function renderPicker(show) {
+  function renderPicker(show: boolean) {
     visible = show;
     const vnode = createVNode(BbPicker, {
       ...pickerProps,
       show,
       showField: false,
       clearable: false,
-      "onUpdate:show": (nextVisible) => {
+      "onUpdate:show": (nextVisible: boolean) => {
         onUpdateShow?.(nextVisible);
         if (!nextVisible && !settled) {
-          finish(undefined, false);
+          finish(undefined as T, false);
         }
       },
-      onVisible: (nextVisible) => {
+      onVisible: (nextVisible: boolean) => {
         onVisible?.(nextVisible);
       },
-      onConfirm: (value) => {
+      onConfirm: (value: T) => {
         finish(value, true);
       },
       onClosed: cleanup,
@@ -97,7 +110,7 @@ export function showBbPicker(options = {}) {
     scheduleCleanupFallback();
   }
 
-  function finish(value, confirmed) {
+  function finish(value: T, confirmed: boolean) {
     if (settled) return;
     settled = true;
 
@@ -113,13 +126,12 @@ export function showBbPicker(options = {}) {
     closePicker();
   }
 
-  const promise = new Promise((resolve, reject) => {
+  const promise = new Promise<T>((resolve, reject) => {
     resolvePromise = resolve;
     rejectPromise = reject;
-  });
+  }) as BbPickerPromise<T>;
 
-
-  promise.close = () => finish(undefined, false);
+  promise.close = () => finish(undefined as T, false);
   renderPicker(false);
 
   const openPicker =
@@ -136,12 +148,12 @@ export function showBbPicker(options = {}) {
   return promise;
 }
 
-function install(Vue) {
-  if (!Vue) return;
-  Vue.component("BbPicker", BbPicker);
+function install(app: App) {
+  if (!app) return;
+  app.component("BbPicker", BbPicker);
 
-  if (Vue.config?.globalProperties) {
-    Vue.config.globalProperties.$bbPicker = showBbPicker;
+  if (app.config?.globalProperties) {
+    app.config.globalProperties.$bbPicker = showBbPicker;
   }
 }
 
