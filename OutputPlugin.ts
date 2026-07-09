@@ -11,6 +11,7 @@ let spinnerIndex = 0;
 let spinnerInterval: NodeJS.Timeout | null = null;
 let loadingText = '';
 let loadingLineLength = 0;
+let loadingStartedAt = 0;
 
 type BundleItem = OutputAsset | OutputChunk;
 
@@ -20,7 +21,8 @@ interface OutputPluginOptions {
 }
 
 function writeLoadingLine(text: string) {
-  const line = `${spinnerChars[spinnerIndex]} ${text}`;
+  const elapsed = loadingStartedAt ? Math.floor((Date.now() - loadingStartedAt) / 1000) : 0;
+  const line = `${spinnerChars[spinnerIndex]} ${text}${elapsed ? ` 已用 ${elapsed}s` : ''}`;
   const padding = Math.max(0, loadingLineLength - line.length);
   process.stdout.write(`\r${line}${' '.repeat(padding)}`);
   loadingLineLength = line.length;
@@ -28,6 +30,7 @@ function writeLoadingLine(text: string) {
 
 function startLoading(text: string) {
   loadingText = text;
+  loadingStartedAt = Date.now();
   spinnerIndex = 0;
   process.stdout.write('\x1B[?25l');
   writeLoadingLine(loadingText);
@@ -40,6 +43,7 @@ function startLoading(text: string) {
 
 function updateLoading(text: string) {
   loadingText = text;
+  loadingStartedAt = Date.now();
   if (!spinnerInterval) {
     startLoading(text);
     return;
