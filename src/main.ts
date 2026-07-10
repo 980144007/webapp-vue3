@@ -18,7 +18,8 @@ import {
     decodeUri,
     getUrlParam
 } from "common/js/commonMethods";
-import BbLoading from "components/BbLoading"
+import SunshineBabyUI from '@sunshine-baby/baby-ui';
+import '@sunshine-baby/baby-ui/style';
 import { useLanguage } from 'stores'
 const vm = createApp(App);
 const pinia = createPinia();
@@ -38,7 +39,6 @@ const commonFns = {
   axios,
   lodash,
   cloneDeep: lodash.cloneDeep,
-  dayjs,
   qs,
   decodeUri,
   getUrlParam,
@@ -74,5 +74,5 @@ for(let key in directives) {
     if(!name) continue;
     vm.directive(name, directive)
 }
-vm.use(BbLoading);
+vm.use(SunshineBabyUI);
 vm.mount('#app');

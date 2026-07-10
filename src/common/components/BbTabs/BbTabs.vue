@@ -1,8 +1,8 @@
 <template>
   <div class="bb-tabs-container" :class="[hideTabs ? 'hide-tabs' : '', size]">
     <van-tabs v-bind="vanProps" ref="tabsRef" v-model:active="activeName" :lazy-render="true">
-      <van-tab v-for="(slot, index) in slotList" :key="slot.props?.name" :name="slot.props?.name" :title="slot.props?.title">
-        <component :is="slot"></component>
+      <van-tab v-for="item in displayList" :key="item.name" :name="item.name" :title="item.title">
+        <component :is="item.component" v-bind="item.props"></component>
       </van-tab>
     </van-tabs>
   </div>
@@ -60,13 +60,15 @@ const displayList = computed(() => {
     return props.tabs.map(item => ({
       name: item.name,
       title: item.title,
-      component: item.component
+      component: item.component,
+      props: item
     }))
   }
   return slotList.value.map(slot => ({
     name: slot.props?.name,
     title: slot.props?.title,
-    component: slot
+    component: slot.type,
+    props: slot.props
   }))
 })
 const tabsRef = ref(null)
@@ -103,7 +105,7 @@ const activeName = computed({
     .van-tab__panel {
       width: 100%;
     }
-      
+
     }
   &.hide-tabs {
     :deep(.van-tabs) {

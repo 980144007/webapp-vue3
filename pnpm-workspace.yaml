@@ -2,3 +2,6 @@ allowBuilds:
   core-js: true
   esbuild: true
   vue-demi: true
+minimumReleaseAgeExclude:
+  - '@sunshine-baby/baby-ui@0.0.2'
+  - '@sunshine-baby/baby-ui@0.0.3'

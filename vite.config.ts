@@ -83,8 +83,39 @@ export default defineConfig(({mode, command}) => {
         resolvers: [VantResolver()],
       }),
       Components({
-        resolvers: [VantResolver()],
-        dirs: ["src/common/components"],
+        resolvers: [
+          (componentName) => {
+            const babyUIComponents = new Set([
+              "Bb3DCube",
+              "BbCascaderPicker",
+              "BbDatePicker",
+              "BbDateRangeFieldPicker",
+              "BbDateRangePicker",
+              "BbDialog",
+              "BbFloatingButton",
+              "BbImagesPicker",
+              "BbList",
+              "BbLoading",
+              "BbLoadingIcon",
+              "BbMultiplePicker",
+              "BbPagePicker",
+              "BbPicker",
+              "BbRotate",
+              "BbTabbar",
+              "BbTable",
+              "BbTabs",
+            ]);
+            if (babyUIComponents.has(componentName)) {
+              return {
+                name: componentName,
+                from: "@sunshine-baby/baby-ui",
+                sideEffects: "@sunshine-baby/baby-ui/style",
+              };
+            }
+          },
+          VantResolver(),
+        ],
+        dirs: [],
         dts: !isBuild,
       }),
       requireTransform({}),

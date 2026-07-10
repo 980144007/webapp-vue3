@@ -4,7 +4,7 @@
       <van-tabbar-item v-for="(slot, index) in slotList" :key="index" :name="slot.props.name" :icon="slot.props?.icon">{{ slot.props?.title }}</van-tabbar-item>
     </van-tabbar>
     <div class="main-container">
-      <component v-for="(slot, index) in slotList" :key="slot.props?.name" v-show="activeName === slot.props.name" :is="slot" />
+      <component v-for="slot in slotList" :key="slot.props?.name" v-show="activeName === slot.props.name" :is="slot.type" v-bind="slot.props" />
     </div>
     <van-tabbar v-bind="vanProps" v-if="slotList.length > 1 && navPosition === 'bottom' && !(followFullScreen && deviceStore.isFullScreen)" v-model="activeName" :fixed="false">
       <van-tabbar-item v-for="(slot, index) in slotList" :key="index" :name="slot.props.name" :icon="slot.props?.icon">
