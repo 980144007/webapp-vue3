@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@sunshine-baby/baby-ui':
-        specifier: ^0.0.3
-        version: 0.0.3(vue@3.5.39(typescript@6.0.3))
+        specifier: ^0.0.5
+        version: 0.0.5(vue@3.5.39(typescript@6.0.3))
       '@vant/touch-emulator':
         specifier: ^1.5.0
         version: 1.5.0
@@ -1443,8 +1443,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@sunshine-baby/baby-ui@0.0.3':
-    resolution: {integrity: sha512-81l7TvJZwJZec/EfgM43tPwP73coKfjrp/+goDNUFLIbV9ri225sokx5ji4o8xODDwF3G9NzOf0NjVC7hfETQw==}
+  '@sunshine-baby/baby-ui@0.0.5':
+    resolution: {integrity: sha512-rtBAGi9DLAfcM1JQHyBDFogtgVrDCq5kfRRhuGuTIruXbIMQ205//5cX/kg3u8Hyg14cAWW9o1tQmw7WVA7m7g==}
     peerDependencies:
       vue: ^3.5.0
 
@@ -4211,7 +4211,7 @@ snapshots:
   '@rollup/rollup-win32-x64-msvc@4.61.1':
     optional: true
 
-  '@sunshine-baby/baby-ui@0.0.3(vue@3.5.39(typescript@6.0.3))':
+  '@sunshine-baby/baby-ui@0.0.5(vue@3.5.39(typescript@6.0.3))':
     dependencies:
       dayjs: 1.11.21
       decimal.js: 10.6.0

@@ -33,11 +33,6 @@ declare module 'directives' {
   export default directives;
 }
 
-declare module 'components/BbLoading' {
-  const plugin: any;
-  export default plugin;
-}
-
 declare module 'common/js/commonMethods' {
   export const decodeUri: any;
   export const getUrlParam: any;

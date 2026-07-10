@@ -28,7 +28,7 @@
     "h5"
   ],
   "dependencies": {
-    "@sunshine-baby/baby-ui": "^0.0.3",
+    "@sunshine-baby/baby-ui": "^0.0.5",
     "@vant/touch-emulator": "^1.5.0",
     "axios": "^1.18.1",
     "dayjs": "^1.11.21",

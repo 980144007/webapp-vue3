@@ -98,10 +98,10 @@ function toPick() {
 }
 
 function handleChange({target}) {
-  
+
   const num = props.maxCount - fileList.value.length;
   if(num <= 0) {
-    this.showToast('最多上传' + props.maxCount + '个文件');
+    $toast('最多上传' + props.maxCount + '个文件');
     return;
   }
   let delNum = 0;
@@ -114,7 +114,7 @@ function handleChange({target}) {
     return !isOverSize;
   });
   if(delNum > 0) {
-    this.showToast('文件过大，已自动过滤' + delNum + '个文件');
+    $toast('文件过大，已自动过滤' + delNum + '个文件');
   }
   $loading.open();
   uploadFiles(list.map(fileItem => ({file: fileItem}))).then(resList => {
@@ -201,7 +201,7 @@ function deleteFile($randomId) {
   background-color: @background-white-color;
   :deep(.van-uploader) {
     display: none;
-    
+
   }
   .tip {
     padding: 4px 18px;
