@@ -5,6 +5,7 @@ import router from 'router'
 import piniaPersist from 'pinia-plugin-persistedstate'
 import { createPinia } from 'pinia'
 import { showSuccessToast, showFailToast, Toast } from 'vant';
+import { BbLoading } from '@sunshine-baby/baby-ui';
 import i18n, { setupI18n } from './i18n'
 
 import {
@@ -18,8 +19,6 @@ import {
     decodeUri,
     getUrlParam
 } from "common/js/commonMethods";
-import SunshineBabyUI from '@sunshine-baby/baby-ui';
-import '@sunshine-baby/baby-ui/style';
 import { useLanguage } from 'stores'
 const vm = createApp(App);
 const pinia = createPinia();
@@ -30,8 +29,8 @@ const languageStore = useLanguage()
 setupI18n(languageStore)
 const axios = useAxios();
 const fileFetch = useFileFetch();
-
 const commonFns = {
+  loading: BbLoading.Loading,
   post: axios.post,
   get: axios.get,
   uploadFile: fileFetch.upload,
@@ -74,5 +73,5 @@ for(let key in directives) {
     if(!name) continue;
     vm.directive(name, directive)
 }
-vm.use(SunshineBabyUI);
+
 vm.mount('#app');

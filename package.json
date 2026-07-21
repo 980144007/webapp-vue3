@@ -8,18 +8,18 @@
     "url": "git+https://github.com/980144007/baby-webapp-vue.git"
   },
   "scripts": {
-    "dev": "vite",
-    "serve": "vite",
-    "start": "vite",
-    "build": "vite build",
-    "dev:test": "vite --mode test",
-    "serve:test": "vite  --mode test",
-    "start:test": "vite  --mode test",
-    "build:test": "vite build  --mode test",
-    "dev:prod": "vite --mode prod",
-    "serve:prod": "vite  --mode prod",
-    "start:prod": "vite  --mode prod",
-    "build:prod": "vite build  --mode prod"
+    "dev": "set NODE_ENV=development&& vite",
+    "serve": "set NODE_ENV=development&& vite",
+    "start": "set NODE_ENV=development&& vite",
+    "build": "set NODE_ENV=production&& vite build",
+    "dev:test": "set NODE_ENV=development&& vite --mode test",
+    "serve:test": "set NODE_ENV=development&& vite  --mode test",
+    "start:test": "set NODE_ENV=development&& vite  --mode test",
+    "build:test": "set NODE_ENV=production&& vite build  --mode test",
+    "dev:prod": "set NODE_ENV=development&& vite --mode prod",
+    "serve:prod": "set NODE_ENV=development&& vite  --mode prod",
+    "start:prod": "set NODE_ENV=development&& vite  --mode prod",
+    "build:prod": "set NODE_ENV=production&& vite build  --mode prod"
   },
   "keywords": [
     "vue3",

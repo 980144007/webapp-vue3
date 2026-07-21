@@ -22,32 +22,38 @@ const https = false;
 
 export default defineConfig(({mode, command}) => {
   const {
+    NODE_ENV,
     VITE_PROJECT_NAME,
     VITE_PROJECT_DESC,
     ...others
   } = loadEnv(mode, process.cwd());
   const isBuild = command === 'build';
+  const isLocal = NODE_ENV === 'development';
   const outDir = `${tempOutputDir}/${VITE_PROJECT_NAME}`;
+  const define: Record<string, string> = {};
   const proxy: NonNullable<UserConfig['server']>['proxy'] = {};
-  for(let key in others) {
-    if(/_URL$/.test(key)) {
+  for (const key in others) {
+    if (/_URL$/.test(key)) {
       const url = others[key];
       // console.log(key)
-      if(!url) {
+      if (!url) {
         continue;
       }
-      proxy[`/${url}`] = {
+      const clientUrl = isLocal && !url.startsWith('/') ? `/${url}` : url;
+      define[`import.meta.env.${key}`] = JSON.stringify(clientUrl);
+      proxy[clientUrl] = {
         // target: "http://192.168.37.83/api",//本地
         target: url,//测试
         changeOrigin: true,//开启跨域
         // rewrite: (path) => path.replace(/^\/normalApi/, "")
-        rewrite: (path) => path.replace(new RegExp(`^/${url}`), "")
+        rewrite: (path) => path.replace(clientUrl, "")
       }
     }
   }
   return {
     base: "./",
     assetsPublicPath: "./",
+    define,
     build: {
       outDir,
       rollupOptions: {
