@@ -202,7 +202,6 @@ export default function OutputPlugin({
   if(process.env.NODE_ENV !== "production") return;
 
   let outDir = '';
-  let tempRootDir = '';
   let transformCount = 0;
   const zipRoot = rootDir ? rootDir.replace(/\\/g, '/').replace(/\/+$/, '') : '';
 
@@ -210,13 +209,9 @@ export default function OutputPlugin({
     name: 'output-plugin',
     configResolved(config) {
       outDir = config.build.outDir;
-      tempRootDir = path.dirname(outDir);
     },
     buildStart() {
       transformCount = 0;
-      removeDirectory(tempRootDir);
-      fs.mkdirSync(tempRootDir, { recursive: true });
-      hideDirectory(tempRootDir);
       startLoading('正在构建项目...');
     },
     transform() {
@@ -243,7 +238,7 @@ export default function OutputPlugin({
       try {
         await zipDirectory(outDir, zipRoot, outputZipPath);
       } finally {
-        removeDirectory(tempRootDir);
+        removeDirectory(outDir);
       }
 
       stopLoading(`✓ 压缩包创建完成: ${path.resolve(outputZipPath)}`);
